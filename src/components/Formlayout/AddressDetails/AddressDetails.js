@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Paper, Grid, Box, Checkbox } from "@material-ui/core";
 import _ from 'lodash'
-// import { IndianStates } from "../../../seed/seed";
 import InputSelect from "../../Common/InputSelect";
 import InputText from '../../Common/InputText';
 import { AddressDetailsStyles } from '../../Common/commonStyles'
@@ -14,23 +13,27 @@ const AddressDetails = (props) => {
     const currentState = _.cloneDeep(state);
     const { addressDetails } = currentState;
     const [states, setStates] = useState([]);
+    const [districts, setDistricts] = useState([]);
 
-
-    const handleChange = (e) => {
-        addressDetails[e.target.name] = e.target.value;
+    const handleChange = (key, value) => {
+        addressDetails[key] = value;
         onChange('addressDetails', addressDetails);
     }
 
     useEffect(() => {
-        let mounted = true;
-        const getStateData = apiAction.getStates();
-
-        if (mounted) {
-            getStateData.then(res => setStates(res.data));
-        }
-        return () => mounted = false;
+        getStateData();
+        getDistrictData();
     }, []);
 
+    const getStateData = async () => {
+        const { data } = await apiAction.getStates();
+        setStates(data);
+    }
+
+    const getDistrictData = async () => {
+        const { data } = await apiAction.getDistricts();
+        setDistricts(data);
+    }
 
     return (
         <Paper className={classes.AddressDetailsStyles} elevation={2}>
@@ -40,8 +43,8 @@ const AddressDetails = (props) => {
                     <Grid item xs={12}>
                         <InputText
                             label='Address'
-                            name='communicationAddress'
-                            value={addressDetails.communicationAddress || ''}
+                            name='address'
+                            value={addressDetails.address || ''}
                             handleChange={handleChange}
                         />
                     </Grid>
@@ -57,26 +60,20 @@ const AddressDetails = (props) => {
                         <InputSelect
                             labelName='State'
                             labelId='state'
-                            name='state'
+                            name='stateId'
                             handleChange={handleChange}
-                            value={addressDetails.state || ''}
+                            value={addressDetails.stateId || ''}
                             menuOptions={states}
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        {/* <InputSelect
+                        <InputSelect
                             labelName='District'
                             labelId='district'
-                            name='district'
-                            value={addressDetails.district || ''}
+                            name='districtId'
                             handleChange={handleChange}
-
-                        /> */}
-                        <InputText
-                            label='District'
-                            name='district'
-                            value={addressDetails.district || ''}
-                            handleChange={handleChange}
+                            value={addressDetails.districtId || ''}
+                            menuOptions={districts}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -91,6 +88,8 @@ const AddressDetails = (props) => {
                         <Box style={{ display: 'flex', alignItems: 'center' }}>
                             <Checkbox
                                 color='primary'
+                                onChange={(e) => handleChange('type', e.target.checked)}
+                                value={addressDetails.type}
                             ></Checkbox>
                             <p>Permanent address is same as communication Address</p>
                         </Box>

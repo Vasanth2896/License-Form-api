@@ -9,8 +9,8 @@ export const initialState = {
         age: '',
         mailId: '',
         mobileNumber: '',
-        motherTongue: '',
-        preferredLanguage: [],
+        motherTongueId: null,
+        preferredLanguageId: [],
         productKnowledge: {
             newspaperCheck: false,
             tvCheck: false,
@@ -21,28 +21,45 @@ export const initialState = {
         },
         other: ''
     },
+
     addressDetails: {
-        communicationAddress: '',
-        district: '',
-        stateId: null,
-        country: '',
-        pincode: '',
+		address: "",
+		stateId: null,
+		districtId: null,
+		pincode: "",
+		country: "",
+		type: 1
     },
-    student: {
-        currentQualification: '',
-        institutionName: '',
-        studyingAt: '',
-        institutionAddress: '',
-        district: '',
-        state: '',
-        country: '',
-        pincode: '',
-    },
-    professional: {
-        level: '',
-        salary: ''
-    },
-    professionalDetailToggle: 'student',
+    qualificationDetails: {
+		userRoleId: 1,
+		userQualificationId: null,
+		institutionName: "",
+		institutionAddress: "",
+		country: "",
+		studyingAt: "",
+		stateId: null,
+		districtId: null,
+		pincode: "",
+		levelId: null,
+		annumSal: null
+	}
+   
+    // student: {
+    //     currentQualification: '',
+    //     institutionName: '',
+    //     studyingAt: '',
+    //     institutionAddress: '',
+    //     district: '',
+    //     state: '',
+    //     country: '',
+    //     pincode: '',
+    // },
+    // professional: {
+    //     level: '',
+    //     salary: ''
+    // },
+    ,
+    professionalDetailToggle: 'professional',
     personalDetailError: {
         usernameError: false,
         mailIdError: false,

@@ -19,39 +19,52 @@ const PersonalDetails = (props) => {
     const classes = personalDetailStyles();
     const [language, setLanguage] = useState([]);
 
-    const handleChange = (e, values) => {
-        personalDetails[e.target.name] = e.target.value;
+    const handleChange = (key, value) => {
+        personalDetails[key] = value;
 
-        if (values) {
-            personalDetails['preferredLanguage'] = values;
-        }
-
-        if ((e.target.name === 'username' || e.target.name === 'mailId') && !e.target.value.toString().replace(/\s/g, '').length <= 0) {
-            personalDetailError[`${e.target.name}Error`] = false;
-            personalDetailError[`${e.target.name}HelperText`] = ''
+        if ((key === 'username' || key === 'mailId') && !value.toString().replace(/\s/g, '').length <= 0) {
+            personalDetailError[`${key}Error`] = false;
+            personalDetailError[`${key}HelperText`] = ''
             onChange('personalDetailError', personalDetailError);
         }
 
         onChange('personalDetails', personalDetails);
     }
 
+    // const handleChange = (e, values) => {
+    //     personalDetails[e.target.name] = e.target.value;
+
+    //     if (values) {
+    //         personalDetails['preferredLanguage'] = values;
+    //     }
+
+    //     if ((e.target.name === 'username' || e.target.name === 'mailId') && !e.target.value.toString().replace(/\s/g, '').length <= 0) {
+    //         personalDetailError[`${e.target.name}Error`] = false;
+    //         personalDetailError[`${e.target.name}HelperText`] = ''
+    //         onChange('personalDetailError', personalDetailError);
+    //     }
+
+    //     onChange('personalDetails', personalDetails);
+    // }
+
+
+
     const handleCheckChange = (e) => {
         productKnowledge[e.target.name] = e.target.checked
         if (!productKnowledge['otherCheck']) {
-            personalDetails.other = ''
+            personalDetails.other = '';
         }
         onChange('personalDetails', personalDetails);
     }
 
-    useEffect(() => {
-        let mounted = true;
-        const getLanguageData = apiAction.getLanguages();
+    useEffect(() => { getLanguageData() }, []);
 
-        if (mounted) {
-            getLanguageData.then(res => setLanguage(res.data));
-        }
-        return () => mounted = false;
-    }, []);
+    const getLanguageData = async () => {
+        const { data } = await apiAction.getLanguages();
+        setLanguage(data);
+    }
+
+    console.log(language);
 
     const checkboxList = [
         {
@@ -102,8 +115,7 @@ const PersonalDetails = (props) => {
                                 fullWidth
                                 variant='filled'
                                 label='User name'
-                                onChange={(e) => handleChange(e)}
-                                name='username'
+                                onChange={(e) => handleChange('username', e.target.value)}
                                 value={personalDetails.username || ''}
                                 error={personalDetailError.usernameError}
                                 helperText={personalDetailError.usernameHelperText}
@@ -114,7 +126,7 @@ const PersonalDetails = (props) => {
                     <Grid item xs={6}>
                         <Box className={classes.genderGroupContainer}>
                             <FormLabel component="legend">Gender</FormLabel>
-                            <RadioGroup aria-label="gender" name="gender" value={personalDetails.gender || 'male'} className={classes.genderContainer} onChange={(e) => handleChange(e)} row>
+                            <RadioGroup aria-label="gender" value={personalDetails.gender || 'male'} className={classes.genderContainer} onChange={(e) => handleChange('gender', e.target.value)} row>
                                 <FormControlLabel value="male" control={<Radio color='primary' />} label="Male" />
                                 <FormControlLabel value='female' control={<Radio color='primary' />} label="Female" />
                             </RadioGroup>
@@ -132,8 +144,7 @@ const PersonalDetails = (props) => {
                                 fullWidth
                                 variant='filled'
                                 label='Age'
-                                onChange={(e) => handleChange(e)}
-                                name='age'
+                                onChange={(e) => handleChange('age', e.target.value)}
                                 value={personalDetails.age}
                             />
                         </Box>
@@ -145,8 +156,7 @@ const PersonalDetails = (props) => {
                                 type='email'
                                 variant='filled'
                                 label='Mail id'
-                                onChange={(e) => handleChange(e)}
-                                name='mailId'
+                                onChange={(e) => handleChange('mailId', e.target.value)}
                                 value={personalDetails.mailId}
                                 error={personalDetailError.mailIdError}
                                 helperText={personalDetailError.mailIdHelperText}
@@ -160,8 +170,7 @@ const PersonalDetails = (props) => {
                                 fullWidth
                                 variant='filled'
                                 label='Mobile no'
-                                onChange={(e) => handleChange(e)}
-                                name='mobileNumber'
+                                onChange={(e) => handleChange('mobileNumber', e.target.value)}
                                 value={personalDetails.mobileNumber}
                             />
                         </Box>
@@ -169,18 +178,15 @@ const PersonalDetails = (props) => {
                     <Grid item xs={6}>
                         <InputSelect
                             labelName='Mother Tongue'
-                            labelId='motherTongue'
-                            name='motherTongue'
+                            name='motherTongueId'
                             handleChange={handleChange}
-                            value={personalDetails.motherTongue}
-                            // menuOptions={languages}
+                            value={personalDetails.motherTongueId}
                             menuOptions={language}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         < LanguageAutoComplete
                             personalDetails={personalDetails}
-                            // languages={languages}
                             languages={language}
                             handleChange={handleChange}
                         />
@@ -199,9 +205,8 @@ const PersonalDetails = (props) => {
                                 fullWidth
                                 variant='filled'
                                 label='Other'
-                                name='other'
                                 value={personalDetails.other}
-                                onChange={(e) => handleChange(e)}
+                                onChange={(e) => handleChange('other', e.target.value)}
                             />
                         </Box>
                     </Grid>

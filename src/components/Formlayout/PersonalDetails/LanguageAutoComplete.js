@@ -23,7 +23,18 @@ const CustomAutoComplete = withStyles({
 
 const LanguageAutoComplete = (props) => {
 
-    const {  personalDetails,languages,handleChange} = props
+    const { personalDetails, languages, handleChange } = props;
+    const { preferredLanguageId } = personalDetails;
+
+    console.log(languages, personalDetails.preferredLanguageId);
+
+
+    let test = languages.map(language => {
+      console.log(preferredLanguageId.map(langId => langId === language.id));
+    })
+    console.log(test);
+
+
 
 
     return (
@@ -31,10 +42,12 @@ const LanguageAutoComplete = (props) => {
             <CustomAutoComplete
                 multiple
                 id="tags-standard"
-                value={personalDetails.preferredLanguage}
+                // value={personalDetails.preferredLanguageId}
                 options={languages}
                 getOptionLabel={languages => languages.name}
-                onChange={(handleChange)}
+                onChange={(e, values) => {
+                    handleChange('preferredLanguageId', values.map(item => { return item.id }));
+                }}
                 renderInput={params => (
                     <TextField
                         {...params}

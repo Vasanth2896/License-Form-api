@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { baseURL } from './apiRoutes'
 
-export const instance = axios.create({
-    baseURL: 'http://localhost:4000',
+export const apiInstance = axios.create({
+    baseURL: baseURL,
     headers: {
         Accept: "application/json"
     },
@@ -9,7 +10,7 @@ export const instance = axios.create({
 });
 
 
-instance.interceptors.response.use(response => {
+apiInstance.interceptors.response.use(response => {
     console.log(response);
     return response;
 }, error => {

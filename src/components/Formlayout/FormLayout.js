@@ -68,12 +68,7 @@ const FormLayout = (props) => {
         return false;
     }
 
-    useEffect(() => {
-        const personalDetailFlag = CheckPersonalDetailsStep();
-        handleComplete(personalDetailFlag, 0);
-
-    }, [personalDetails]);
-
+   
     useEffect(() => {
         const { action, location } = history;
         if (action === 'POP') {
@@ -97,17 +92,25 @@ const FormLayout = (props) => {
         setCompleted({ ...newCompleted });
     };
 
-    useEffect(() => {
-        setErrorFree(newErrorFree);
-        handleComplete(Object.values(addressDetails).every(detail => handleBlankSpace(detail)), 1);
-        if (professionalDetailToggle === 'housewives') {
-            handleComplete(true, 2);
-        }
-        else {
-            handleComplete(Object.values(state[professionalDetailToggle]).every(detail =>  handleBlankSpace(detail)), 2);
-        }
 
-    }, [professional, student, professionalDetailToggle, addressDetails, newErrorFree]);
+    // useEffect(() => {
+    //     const personalDetailFlag = CheckPersonalDetailsStep();
+    //     handleComplete(personalDetailFlag, 0);
+
+    // }, [personalDetails]);
+
+
+    // useEffect(() => {
+    //     setErrorFree(newErrorFree);
+    //     handleComplete(Object.values(addressDetails).every(detail => handleBlankSpace(detail)), 1);
+    //     if (professionalDetailToggle === 'housewives') {
+    //         handleComplete(true, 2);
+    //     }
+    //     else {
+    //         handleComplete(Object.values(state[professionalDetailToggle]).every(detail =>  handleBlankSpace(detail)), 2);
+    //     }
+
+    // }, [professional, student, professionalDetailToggle, addressDetails, newErrorFree]);
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);

@@ -3,36 +3,43 @@ import { Paper, Grid, } from "@material-ui/core";
 import _ from 'lodash';
 import InputSelect from '../../Common/InputSelect';
 import InputText from '../../Common/InputText';
-// import { IndianStates, currentQualificationList } from "../../../seed/seed";
 import { professionalDetailsFormStyles } from '../../Common/commonStyles';
 import * as apiAction from '../../../apiConfig/apis';
 
 const StudentForm = (props) => {
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { student } = currentState;
+    const { qualificationDetails } = currentState;
     const classes = professionalDetailsFormStyles();
     const [states, setStates] = useState([]);
     const [qualifcationDetails, setQualificationDetails] = useState([]);
+    const [districts, setDistricts] = useState([]);
 
-    const handleChange = (e) => {
-        student[e.target.name] = e.target.value
-        onChange('student', student);
+    const handleChange = (key, value) => {
+        qualificationDetails[key] = value;
+        onChange('qualificationDetails', qualificationDetails);
     }
 
-
     useEffect(() => {
-        let mounted = true;
-        const getStateData = apiAction.getStates();
-        const getQualificationData = apiAction.getQualificationDetails();
-        if (mounted) {
-            getStateData.then(res => setStates(res.data));
-            getQualificationData.then(res => setQualificationDetails(res.data));
-        }
-        return () => mounted = false;
-
+        getStateData();
+        getDistrictData();
+        getQualificationData();
     }, []);
 
+    const getStateData = async () => {
+        const { data } = await apiAction.getStates();
+        setStates(data);
+    }
+
+    const getDistrictData = async () => {
+        const { data } = await apiAction.getDistricts();
+        setDistricts(data);
+    }
+
+    const getQualificationData = async () => {
+        const { data } = await apiAction.getQualificationDetails();
+        setQualificationDetails(data);
+    }
 
 
     return (
@@ -42,11 +49,9 @@ const StudentForm = (props) => {
                     <Grid item xs={12}>
                         <InputSelect
                             labelName='Current Qualification'
-                            labelId='currentQualification'
-                            name='currentQualification'
+                            name='userQualificationId'
                             handleChange={handleChange}
-                            value={student.currentQualification}
-                            // menuOptions={currentQualificationList}
+                            value={qualificationDetails.userQualificationId || ''}
                             menuOptions={qualifcationDetails}
                         />
                     </Grid>
@@ -54,7 +59,7 @@ const StudentForm = (props) => {
                         <InputText
                             label='Institution name'
                             name='institutionName'
-                            value={student.institutionName || ''}
+                            value={qualificationDetails.institutionName || ''}
                             handleChange={handleChange}
                         />
                     </Grid>
@@ -62,7 +67,7 @@ const StudentForm = (props) => {
                         <InputText
                             label='Studying at'
                             name='studyingAt'
-                            value={student.studyingAt || ''}
+                            value={qualificationDetails.studyingAt || ''}
                             handleChange={handleChange}
                         />
                     </Grid>
@@ -70,7 +75,7 @@ const StudentForm = (props) => {
                         <InputText
                             label='Institution Address'
                             name='institutionAddress'
-                            value={student.institutionAddress || ''}
+                            value={qualificationDetails.institutionAddress || ''}
                             handleChange={handleChange}
                         />
                     </Grid>
@@ -78,34 +83,33 @@ const StudentForm = (props) => {
                         <InputText
                             label='Country'
                             name='country'
-                            value={student.country || ''}
+                            value={qualificationDetails.country || ''}
                             handleChange={handleChange}
                         />
                     </Grid>
                     <Grid item xs={6}>
                         <InputSelect
                             labelName='State'
-                            labelId='state'
-                            name='state'
+                            name='stateId'
                             handleChange={handleChange}
-                            value={student.state || ''}
+                            value={qualificationDetails.stateId || ''}
                             menuOptions={states}
-                        // menuOptions={IndianStates}
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <InputText
-                            label='District'
-                            name='district'
-                            value={student.district || ''}
+                        <InputSelect
+                            labelName='District'
+                            name='districtId'
                             handleChange={handleChange}
+                            value={qualificationDetails.districtId || ''}
+                            menuOptions={districts}
                         />
                     </Grid>
                     <Grid item xs={6}>
                         <InputText
                             label='Pincode'
                             name='pincode'
-                            value={student.pincode || ''}
+                            value={qualificationDetails.pincode || ''}
                             handleChange={handleChange}
                         />
                     </Grid>

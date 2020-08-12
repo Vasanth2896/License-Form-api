@@ -1,8 +1,9 @@
-import { instance } from './index';
+import { apiInstance } from './index';
+import * as apiRoutes from './apiRoutes';
 
-export async function getLanguages() {
+export const getLanguages = () => {
     try {
-        const response = await instance.get('/languages');
+        const response = apiInstance.get(apiRoutes.languages);
         return response;
     }
     catch (err) {
@@ -10,9 +11,9 @@ export async function getLanguages() {
     }
 }
 
-export async function getStates() {
+export const getStates = () => {
     try {
-        const response = await instance.get('/states');
+        const response = apiInstance.get(apiRoutes.states);
         return response;
     }
     catch (err) {
@@ -20,9 +21,9 @@ export async function getStates() {
     }
 }
 
-export async function getQualificationDetails() {
+export const getDistricts = () => {
     try {
-        const response = await instance.get('/qualification');
+        const response = apiInstance.get(apiRoutes.districts);
         return response;
     }
     catch (err) {
@@ -30,10 +31,9 @@ export async function getQualificationDetails() {
     }
 }
 
-
-export async function getProfessionalLevel() {
+export const getQualificationDetails = () => {
     try {
-        const response = await instance.get('/professionalLevel');
+        const response = apiInstance.get(apiRoutes.qualification);
         return response;
     }
     catch (err) {
@@ -41,15 +41,28 @@ export async function getProfessionalLevel() {
     }
 }
 
-export async function getSalaryPerAnnum() {
+export const getProfessionalLevel = () => {
     try {
-        const response = await instance.get('/annumSalary');
+        const response = apiInstance.get(apiRoutes.professionalLevel);
         return response;
     }
     catch (err) {
         return err;
     }
 }
+
+export const getSalaryPerAnnum = () => {
+    try {
+        const response = apiInstance.get(apiRoutes.annumSalary);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+
+}
+
+
 
 
 

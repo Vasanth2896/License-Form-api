@@ -1,0 +1,11 @@
+export const baseURL = 'http://localhost:4000';
+export const addressType = '/addressType';
+export const annumSalary = '/annumSalary';
+export const knownviaproducts = '/knownviaproducts';
+export const gender = '/gender';
+export const professionalLevel ='/professionalLevel';
+export const qualification='/qualification';
+export const states = '/states';
+export const districts = '/districts/3'
+export const userRoles = '/userRoles';
+export const languages ='/languages';
