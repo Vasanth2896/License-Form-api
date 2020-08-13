@@ -25,24 +25,14 @@ const LanguageAutoComplete = (props) => {
 
     const { personalDetails, languages, handleChange } = props;
     const { preferredLanguageId } = personalDetails;
-
-    console.log(languages, personalDetails.preferredLanguageId);
-
-
-    let test = languages.map(language => {
-      console.log(preferredLanguageId.map(langId => langId === language.id));
-    })
-    console.log(test);
-
-
-
+    let valuesPresent = languages.filter(lang => preferredLanguageId.includes(lang.id));
 
     return (
         <Box>
             <CustomAutoComplete
                 multiple
                 id="tags-standard"
-                // value={personalDetails.preferredLanguageId}
+                value={valuesPresent}
                 options={languages}
                 getOptionLabel={languages => languages.name}
                 onChange={(e, values) => {

@@ -64,8 +64,6 @@ const PersonalDetails = (props) => {
         setLanguage(data);
     }
 
-    console.log(language);
-
     const checkboxList = [
         {
             id: 0,
