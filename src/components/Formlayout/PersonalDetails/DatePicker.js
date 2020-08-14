@@ -12,8 +12,8 @@ const DatePicker = (props) => {
 
     function convertToTimestamp(date) {
         if (date !== null) {
-            let dateMomentObject = moment(dateOfBirth, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
-            let dateObject = dateMomentObject.toDate(); // convert moment.js object to Date object
+            let dateMomentObject = moment(dateOfBirth, "YYYY/MM/DD"); 
+            let dateObject = dateMomentObject.toDate(); 
             return dateObject;
         } 
         return null;
@@ -27,10 +27,10 @@ const DatePicker = (props) => {
                     label='Date Of birth'
                     value={convertToTimestamp(personalDetails.dateOfBirth)}
                     onChange={(date) => {
-                        personalDetails['dateOfBirth'] = moment(date).format('DD/MM/YYYY')
+                        personalDetails['dateOfBirth'] = moment(date).format('YYYY/MM/DD')
                         onChange('personalDetails', personalDetails);
                     }}
-                    format="DD/MM/YYYY"
+                    format="YYYY/MM/DD"
                     inputVariant='filled'
                     fullWidth
                 />

@@ -92,6 +92,29 @@ export const getUserRoles = () => {
     }
 }
 
+export const getAllUsers = () => {
+    try {
+        const response = apiInstance.get(apiRoutes.getAllUsers);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+
+export const createUser = (user) => {
+    try {
+        const response = apiInstance.post(apiRoutes.createUsers, {
+            ...user
+        });
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
 
 
 

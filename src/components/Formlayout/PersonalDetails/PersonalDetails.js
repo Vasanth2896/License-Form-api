@@ -22,7 +22,7 @@ const PersonalDetails = (props) => {
 
     const handleChange = (key, value) => {
         personalDetails[key] = value;
-        if ((key === 'username' || key === 'mailId') && !value.toString().replace(/\s/g, '').length <= 0) {
+        if ((key === 'name' || key === 'mailId') && !value.toString().replace(/\s/g, '').length <= 0) {
             personalDetailError[`${key}Error`] = false;
             personalDetailError[`${key}HelperText`] = ''
             onChange('personalDetailError', personalDetailError);
@@ -64,10 +64,10 @@ const PersonalDetails = (props) => {
                                 fullWidth
                                 variant='filled'
                                 label='User name'
-                                onChange={(e) => handleChange('username', e.target.value)}
-                                value={personalDetails.username || ''}
-                                error={personalDetailError.usernameError}
-                                helperText={personalDetailError.usernameHelperText}
+                                onChange={(e) => handleChange('name', e.target.value)}
+                                value={personalDetails.name || ''}
+                                error={personalDetailError.nameError}
+                                helperText={personalDetailError.nameHelperText}
                                 required
                             />
                         </Box>
@@ -118,8 +118,8 @@ const PersonalDetails = (props) => {
                                 fullWidth
                                 variant='filled'
                                 label='Mobile no'
-                                onChange={(e) => handleChange('mobileNumber', e.target.value)}
-                                value={personalDetails.mobileNumber}
+                                onChange={(e) => handleChange('mobNo', e.target.value)}
+                                value={personalDetails.mobNo}
                             />
                         </Box>
                     </Grid>

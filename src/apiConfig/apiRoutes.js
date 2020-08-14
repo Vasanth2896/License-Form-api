@@ -9,3 +9,5 @@ export const states = '/states';
 export const districts = '/districts/'
 export const userRoles = '/userRoles';
 export const languages ='/languages';
+export const createUsers ='/createUsers';
+export const allUsers = '/allUsers';
