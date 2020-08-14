@@ -94,7 +94,7 @@ export const getUserRoles = () => {
 
 export const getAllUsers = () => {
     try {
-        const response = apiInstance.get(apiRoutes.getAllUsers);
+        const response = apiInstance.get(apiRoutes.AllUsers);
         return response;
     }
     catch (err) {
