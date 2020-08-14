@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import {
-    TextField, Paper, Grid, Box, RadioGroup, FormLabel, FormControlLabel, Radio,
+    TextField, Paper, Grid, Box
 } from '@material-ui/core';
 import _ from 'lodash'
 import InputSelect from '../../Common/InputSelect';
-import { languages } from '../../../seed/seed';
 import * as apiAction from '../../../apiConfig/apis';
-import CheckboxGroup from '../../Common/CheckboxGroup';
+import CheckboxGroup from './CheckboxGroup';
 import { personalDetailStyles } from "../../Common/commonStyles";
 import DatePicker from "./DatePicker";
 import LanguageAutoComplete from './LanguageAutoComplete';
+import Gender from './Gender'
 
 const PersonalDetails = (props) => {
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
     const { personalDetails, personalDetailError } = currentState;
-    const { productKnowledge } = personalDetails;
     const classes = personalDetailStyles();
     const [language, setLanguage] = useState([]);
+    const [knowledgeSeed, setKnowledgeSeed] = useState([]);
+    const [gender, setGender] = useState([]);
 
     const handleChange = (key, value) => {
         personalDetails[key] = value;
-
         if ((key === 'username' || key === 'mailId') && !value.toString().replace(/\s/g, '').length <= 0) {
             personalDetailError[`${key}Error`] = false;
             personalDetailError[`${key}HelperText`] = ''
@@ -31,77 +31,28 @@ const PersonalDetails = (props) => {
         onChange('personalDetails', personalDetails);
     }
 
-    // const handleChange = (e, values) => {
-    //     personalDetails[e.target.name] = e.target.value;
-
-    //     if (values) {
-    //         personalDetails['preferredLanguage'] = values;
-    //     }
-
-    //     if ((e.target.name === 'username' || e.target.name === 'mailId') && !e.target.value.toString().replace(/\s/g, '').length <= 0) {
-    //         personalDetailError[`${e.target.name}Error`] = false;
-    //         personalDetailError[`${e.target.name}HelperText`] = ''
-    //         onChange('personalDetailError', personalDetailError);
-    //     }
-
-    //     onChange('personalDetails', personalDetails);
-    // }
-
-
-
-    const handleCheckChange = (e) => {
-        productKnowledge[e.target.name] = e.target.checked
-        if (!productKnowledge['otherCheck']) {
-            personalDetails.other = '';
-        }
-        onChange('personalDetails', personalDetails);
-    }
-
-    useEffect(() => { getLanguageData() }, []);
+    useEffect(() => {
+        getLanguageData();
+        getKnowledgeSeed();
+        getGenderData();
+    }, []);
 
     const getLanguageData = async () => {
         const { data } = await apiAction.getLanguages();
         setLanguage(data);
     }
 
-    const checkboxList = [
-        {
-            id: 0,
-            label: 'Newspaper / Ads',
-            name: 'newspaperCheck',
-            value: productKnowledge.newspaperCheck
-        },
-        {
-            id: 1,
-            label: 'TV media',
-            name: 'tvCheck',
-            value: productKnowledge.tvCheck
-        },
-        {
-            id: 2,
-            label: 'Facebook',
-            name: 'facebookCheck',
-            value: productKnowledge.facebookCheck
-        },
-        {
-            id: 3,
-            label: 'LinkedIn',
-            name: 'linkedInCheck',
-            value: productKnowledge.linkedInCheck
-        },
-        {
-            id: 4,
-            label: 'By Friend',
-            name: 'byFriendCheck',
-            value: productKnowledge.byFriendCheck
-        },
-        {
-            id: 5,
-            label: 'Others',
-            name: 'otherCheck',
-            value: productKnowledge.otherCheck
-        }
-    ]
+    const getKnowledgeSeed = async () => {
+        const { data } = await apiAction.getKnownViaProducts();
+        setKnowledgeSeed(data);
+    }
+
+    const getGenderData = async () => {
+        const { data } = await apiAction.getGender();
+        setGender(data);
+    }
+
+
 
     return (
         <Paper style={{ background: '#8080801f', height: 'auto' }} elevation={2}>
@@ -122,13 +73,12 @@ const PersonalDetails = (props) => {
                         </Box>
                     </Grid>
                     <Grid item xs={6}>
-                        <Box className={classes.genderGroupContainer}>
-                            <FormLabel component="legend">Gender</FormLabel>
-                            <RadioGroup aria-label="gender" value={personalDetails.gender || 'male'} className={classes.genderContainer} onChange={(e) => handleChange('gender', e.target.value)} row>
-                                <FormControlLabel value="male" control={<Radio color='primary' />} label="Male" />
-                                <FormControlLabel value='female' control={<Radio color='primary' />} label="Female" />
-                            </RadioGroup>
-                        </Box>
+                        <Gender
+                            personalDetails={personalDetails}
+                            genderList={gender}
+                            classes={classes}
+                            handleChange={handleChange}
+                        />
                     </Grid>
                     <Grid item xs={6}>
                         <DatePicker
@@ -178,7 +128,7 @@ const PersonalDetails = (props) => {
                             labelName='Mother Tongue'
                             name='motherTongueId'
                             handleChange={handleChange}
-                            value={personalDetails.motherTongueId}
+                            value={personalDetails.motherTongueId || ''}
                             menuOptions={language}
                         />
                     </Grid>
@@ -191,19 +141,21 @@ const PersonalDetails = (props) => {
                     </Grid>
                     <Grid item xs={12}>
                         <CheckboxGroup
-                            checkboxList={checkboxList}
                             formLabel='How you come to know about the product?'
-                            handleChange={handleCheckChange}
+                            knowledgeSeed={knowledgeSeed}
+                            personalDetails={personalDetails}
+                            onChange={onChange}
                             formGroupClassName={classes.feedbackCheckboxContainer}
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Box className={productKnowledge.otherCheck ? classes.showOrder : classes.hideOrder} >
+                        <Box className={personalDetails.knownViaProducts.includes(6) ? classes.showOrder : classes.hideOrder} >
+                            {/* <Box> */}
                             <TextField
                                 fullWidth
                                 variant='filled'
                                 label='Other'
-                                value={personalDetails.other}
+                                value={personalDetails.other || ''}
                                 onChange={(e) => handleChange('other', e.target.value)}
                             />
                         </Box>

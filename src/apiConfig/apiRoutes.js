@@ -6,6 +6,6 @@ export const gender = '/gender';
 export const professionalLevel ='/professionalLevel';
 export const qualification='/qualification';
 export const states = '/states';
-export const districts = '/districts/3'
+export const districts = '/districts/'
 export const userRoles = '/userRoles';
 export const languages ='/languages';

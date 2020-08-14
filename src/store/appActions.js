@@ -4,62 +4,37 @@ export const UPDATE_STATE = "UPDATE_STATE";
 export const initialState = {
     personalDetails: {
         username: '',
-        gender: 'male',
+        genderId: 1,
         dateOfBirth: null,
         age: '',
         mailId: '',
         mobileNumber: '',
         motherTongueId: null,
         preferredLanguageId: [],
-        productKnowledge: {
-            newspaperCheck: false,
-            tvCheck: false,
-            facebookCheck: false,
-            linkedInCheck: false,
-            byFriendCheck: false,
-            otherCheck: false
-        },
+        knownViaProducts: [],
         other: ''
     },
-
     addressDetails: {
-		address: "",
-		stateId: null,
-		districtId: null,
-		pincode: "",
-		country: "",
-		type: 1
+        address: "",
+        stateId: null,
+        districtId: null,
+        pincode: "",
+        country: "",
+        type: 1
     },
     qualificationDetails: {
-		userRoleId: 1,
-		userQualificationId: null,
-		institutionName: "",
-		institutionAddress: "",
-		country: "",
-		studyingAt: "",
-		stateId: null,
-		districtId: null,
-		pincode: "",
-		levelId: null,
-		annumSal: null
-	}
-   
-    // student: {
-    //     currentQualification: '',
-    //     institutionName: '',
-    //     studyingAt: '',
-    //     institutionAddress: '',
-    //     district: '',
-    //     state: '',
-    //     country: '',
-    //     pincode: '',
-    // },
-    // professional: {
-    //     level: '',
-    //     salary: ''
-    // },
-    ,
-    professionalDetailToggle: 'professional',
+        userRoleId: 1,
+        userQualificationId: null,
+        institutionName: "",
+        institutionAddress: "",
+        country: "",
+        studyingAt: "",
+        stateId: null,
+        districtId: null,
+        pincode: "",
+        levelId: null,
+        annumSal: null
+    },
     personalDetailError: {
         usernameError: false,
         mailIdError: false,

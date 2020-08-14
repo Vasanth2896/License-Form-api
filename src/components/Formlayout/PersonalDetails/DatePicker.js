@@ -7,8 +7,17 @@ import { Box } from '@material-ui/core';
 
 const DatePicker = (props) => {
 
-    const {personalDetails,onChange} = props;
-  
+    const { personalDetails, onChange } = props;
+    const { dateOfBirth } = personalDetails;
+
+    function convertToTimestamp(date) {
+        if (date !== null) {
+            let dateMomentObject = moment(dateOfBirth, "DD/MM/YYYY"); // 1st argument - string, 2nd argument - format
+            let dateObject = dateMomentObject.toDate(); // convert moment.js object to Date object
+            return dateObject;
+        } 
+        return null;
+    }
 
     return (
         <Box>
@@ -16,9 +25,9 @@ const DatePicker = (props) => {
                 <KeyboardDatePicker
                     clearable
                     label='Date Of birth'
-                    value={personalDetails.dateOfBirth}
-                    onChange={date => {
-                        personalDetails['dateOfBirth'] = date
+                    value={convertToTimestamp(personalDetails.dateOfBirth)}
+                    onChange={(date) => {
+                        personalDetails['dateOfBirth'] = moment(date).format('DD/MM/YYYY')
                         onChange('personalDetails', personalDetails);
                     }}
                     format="DD/MM/YYYY"

@@ -7,22 +7,21 @@ import { professionalDetailsFormStyles } from '../../Common/commonStyles';
 import * as apiAction from '../../../apiConfig/apis';
 
 const StudentForm = (props) => {
-    const { state, onChange } = props;
+    const { state, onChange, districts } = props;
     const currentState = _.cloneDeep(state);
     const { qualificationDetails } = currentState;
     const classes = professionalDetailsFormStyles();
     const [states, setStates] = useState([]);
     const [qualifcationDetails, setQualificationDetails] = useState([]);
-    const [districts, setDistricts] = useState([]);
+
 
     const handleChange = (key, value) => {
         qualificationDetails[key] = value;
         onChange('qualificationDetails', qualificationDetails);
     }
 
-    useEffect(() => {
+       useEffect(() => {
         getStateData();
-        getDistrictData();
         getQualificationData();
     }, []);
 
@@ -31,12 +30,7 @@ const StudentForm = (props) => {
         setStates(data);
     }
 
-    const getDistrictData = async () => {
-        const { data } = await apiAction.getDistricts();
-        setDistricts(data);
-    }
-
-    const getQualificationData = async () => {
+  const getQualificationData = async () => {
         const { data } = await apiAction.getQualificationDetails();
         setQualificationDetails(data);
     }
@@ -103,6 +97,7 @@ const StudentForm = (props) => {
                             handleChange={handleChange}
                             value={qualificationDetails.districtId || ''}
                             menuOptions={districts}
+                            disabled={qualificationDetails.stateId === null}
                         />
                     </Grid>
                     <Grid item xs={6}>

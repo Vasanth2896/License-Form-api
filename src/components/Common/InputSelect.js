@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Select, FormControl, InputLabel, MenuItem } from "@material-ui/core";
 
 const InputSelect = (props) => {
-    const { labelName,name, value, handleChange, menuOptions } = props;
+    const { labelName,name, value, handleChange, menuOptions,disabled } = props;
     return (
         <Box >
             <FormControl fullWidth>
@@ -11,6 +11,7 @@ const InputSelect = (props) => {
                     variant='filled'
                     onChange={(e) => handleChange(name,e.target.value)}
                     value={value}
+                    disabled={disabled}
                 >
                     {
                         menuOptions.map(option => {

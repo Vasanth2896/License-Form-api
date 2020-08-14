@@ -1,6 +1,16 @@
 import { apiInstance } from './index';
 import * as apiRoutes from './apiRoutes';
 
+export const getGender = () => {
+    try {
+        const response = apiInstance.get(apiRoutes.gender);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
 export const getLanguages = () => {
     try {
         const response = apiInstance.get(apiRoutes.languages);
@@ -21,9 +31,9 @@ export const getStates = () => {
     }
 }
 
-export const getDistricts = () => {
+export const getDistricts = (stateId) => {
     try {
-        const response = apiInstance.get(apiRoutes.districts);
+        const response = apiInstance.get(`${apiRoutes.districts + stateId}`);
         return response;
     }
     catch (err) {
@@ -61,6 +71,28 @@ export const getSalaryPerAnnum = () => {
     }
 
 }
+
+export const getKnownViaProducts = () => {
+    try {
+        const response = apiInstance.get(apiRoutes.knownviaproducts);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+export const getUserRoles = () => {
+    try {
+        const response = apiInstance.get(apiRoutes.userRoles);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+
 
 
 

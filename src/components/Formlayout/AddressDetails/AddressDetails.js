@@ -20,9 +20,14 @@ const AddressDetails = (props) => {
         onChange('addressDetails', addressDetails);
     }
 
+    useEffect(()=>{
+        if(addressDetails.stateId !==null){
+            getDistrictData(addressDetails.stateId)
+        }
+    },[addressDetails.stateId])
+
     useEffect(() => {
         getStateData();
-        getDistrictData();
     }, []);
 
     const getStateData = async () => {
@@ -30,8 +35,8 @@ const AddressDetails = (props) => {
         setStates(data);
     }
 
-    const getDistrictData = async () => {
-        const { data } = await apiAction.getDistricts();
+    const getDistrictData = async (id) => {
+        const { data } = await apiAction.getDistricts(id);
         setDistricts(data);
     }
 
@@ -74,6 +79,7 @@ const AddressDetails = (props) => {
                             handleChange={handleChange}
                             value={addressDetails.districtId || ''}
                             menuOptions={districts}
+                            disabled={addressDetails.stateId === null}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -88,8 +94,16 @@ const AddressDetails = (props) => {
                         <Box style={{ display: 'flex', alignItems: 'center' }}>
                             <Checkbox
                                 color='primary'
-                                onChange={(e) => handleChange('type', e.target.checked)}
-                                value={addressDetails.type}
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        handleChange('type', 2);
+                                    }
+                                    else {
+                                        handleChange('type', 1);
+                                    }
+                                }
+                                }
+                                checked={addressDetails.type === 2}
                             ></Checkbox>
                             <p>Permanent address is same as communication Address</p>
                         </Box>
