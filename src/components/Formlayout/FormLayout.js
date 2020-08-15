@@ -12,6 +12,7 @@ import * as appActions from '../../store/appActions'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import NavigationStepper from '../Common/NavigationStepper';
+import * as apiAction from '../../apiConfig/apis'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,14 +21,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormLayout = (props) => {
-    const { state, history } = props;
-    const { student, professional, personalDetails, addressDetails, professionalDetailToggle, personalDetailError } = state;
+    const { state, history, onChange } = props;
+    const { personalDetails, addressDetails, qualifcationDetails, personalDetailError } = state;
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
     const [errorFree, setErrorFree] = useState(false);
     const newCompleted = { ...completed };
-    const newErrorFree = personalDetailError.usernameError || personalDetailError.mailIdError;
+    const newErrorFree = personalDetailError.nameError || personalDetailError.mailIdError;
     const steps = [
         {
             id: 0,
@@ -46,29 +47,67 @@ const FormLayout = (props) => {
         }
     ];
 
-    function handleBlankSpace(detail){
-        return !detail.toString().replace(/\s/g, '').length <= 0;
-    }
+    useEffect(() => {
+        loadSeed();
+    }, [])
 
-    function CheckPersonalDetailsStep() {
-        const { dateOfBirth, preferredLanguage, productKnowledge, other, ...textDetails } = personalDetails;
-        const productKnowledgeChecked = Object.values(productKnowledge).some(checked => checked);
-        const textDetailsFilled = Object.values(textDetails).every(detail => handleBlankSpace(detail));
-        const otherIsChecked = dateOfBirth && preferredLanguage.length &&
-            productKnowledgeChecked && textDetailsFilled && productKnowledge.otherCheck && other !== '';
-        const otherIsNotChecked = dateOfBirth && preferredLanguage.length
-            && productKnowledgeChecked && textDetailsFilled && !productKnowledge.otherCheck;
+    const loadSeed = async () => {
+        const getStateData = await apiAction.getStates();
+        const getGenderData = await apiAction.getGender();
+        const getLanguagesData = await apiAction.getLanguages();
+        const getQualificationDetailsData = await apiAction.getQualificationDetails();
+        const getProfessionalLevelData = await apiAction.getProfessionalLevel();
+        const getSalaryPerAnnumData = await apiAction.getSalaryPerAnnum();
+        const getKnowledgeSeedData = await apiAction.getKnownViaProducts();
+        const getUserRolesData = await apiAction.getUserRoles();
+        const getAddressTypeData = await apiAction.getAddressType();
+        const getAllUsersData = await apiAction.getAllUsers();
 
-            
-
-        if (otherIsChecked || otherIsNotChecked) {
-            return true;
+        const seedHolder = {
+            states: getStateData.data,
+            gender: getGenderData.data,
+            language: getLanguagesData.data,
+            qualifcationDetailsSeed: getQualificationDetailsData.data,
+            professionalLevel: getProfessionalLevelData.data,
+            salary: getSalaryPerAnnumData.data,
+            knowledgeSeed: getKnowledgeSeedData.data,
+            userRoles: getUserRolesData.data,
+            addressType: getAddressTypeData.data
         }
 
-        return false;
+        onChange('userList', getAllUsersData.data);
+        onChange('seed', seedHolder);
     }
 
-   
+
+
+
+
+
+
+    // function handleBlankSpace(detail){
+    //     return !detail.toString().replace(/\s/g, '').length <= 0;
+    // }
+
+    // function CheckPersonalDetailsStep() {
+    //     const { dateOfBirth, preferredLanguage, productKnowledge, other, ...textDetails } = personalDetails;
+    //     const productKnowledgeChecked = Object.values(productKnowledge).some(checked => checked);
+    //     const textDetailsFilled = Object.values(textDetails).every(detail => handleBlankSpace(detail));
+    //     const otherIsChecked = dateOfBirth && preferredLanguage.length &&
+    //         productKnowledgeChecked && textDetailsFilled && productKnowledge.otherCheck && other !== '';
+    //     const otherIsNotChecked = dateOfBirth && preferredLanguage.length
+    //         && productKnowledgeChecked && textDetailsFilled && !productKnowledge.otherCheck;
+
+
+
+    //     if (otherIsChecked || otherIsNotChecked) {
+    //         return true;
+    //     }
+
+    //     return false;
+    // }
+
+
     useEffect(() => {
         const { action, location } = history;
         if (action === 'POP') {
@@ -111,6 +150,12 @@ const FormLayout = (props) => {
     //     }
 
     // }, [professional, student, professionalDetailToggle, addressDetails, newErrorFree]);
+
+     useEffect(() => {
+        setErrorFree(newErrorFree);
+      
+
+    }, [newErrorFree]);
 
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);

@@ -14,14 +14,13 @@ const ProfessionalDetails = (props) => {
     const classes = professionalDetailRadioButtonStyles();
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { qualificationDetails, editableIndex } = currentState;
+    const { qualificationDetails, editFlag, seed } = currentState;
     const { userRoleId } = qualificationDetails
     const [professionalValue, setProfessionalValue] = useState(userRoleId);
     const [open, setOpen] = useState(false);
     const [editProfessionalValue, setEditProfessionalvalue] = useState(null);
-    const [userRoles, setUserRoles] = useState([]);
     const [districts, setDistricts] = useState([]);
-
+    const studentFormProps = { ...props, districts }
 
     useEffect(() => {
         if (qualificationDetails.stateId !== null) {
@@ -29,19 +28,9 @@ const ProfessionalDetails = (props) => {
         }
     }, [qualificationDetails.stateId])
 
-    useEffect(() => {
-        getUserRolesData();
-    }, []);
-
-
     const getDistrictData = async (id) => {
         const { data } = await apiAction.getDistricts(id);
         setDistricts(data);
-    }
-
-    const getUserRolesData = async () => {
-        const { data } = await apiAction.getUserRoles();
-        setUserRoles(data);
     }
 
     const handleClickOpen = () => {
@@ -53,17 +42,17 @@ const ProfessionalDetails = (props) => {
     };
 
     const handleOk = () => {
+        qualificationDetails['userRoleId'] = editProfessionalValue;
+        onChange('qualificationDetails', qualificationDetails);
+        dataClearance();
         setProfessionalValue(editProfessionalValue);
-        onChange('professionalDetailToggle', editProfessionalValue);
-        // dataClearance();
         setOpen(false);
     }
 
     const handleRadioChange = (key, value) => {
-
-        if (editableIndex !== null) {
+        if (editFlag) {
             handleClickOpen();
-            // setEditProfessionalvalue(e.target.value);
+            setEditProfessionalvalue(value);
         }
         else {
             qualificationDetails[key] = value;
@@ -75,20 +64,40 @@ const ProfessionalDetails = (props) => {
     }
 
     function dataClearance() {
-        const emptyQualificationDetails = {
-            userRoleId: qualificationDetails.userRoleId,
-            userQualificationId: null,
-            institutionName: "",
-            institutionAddress: "",
-            country: "",
-            studyingAt: "",
-            stateId: null,
-            districtId: null,
-            pincode: "",
-            levelId: null,
-            annumSal: null
-        };
-        onChange('qualificationDetails', emptyQualificationDetails);
+        if (editFlag) {
+            const editEmptyQualificationDetails = {
+                userId: qualificationDetails.userId,
+                id: qualificationDetails.id,
+                userRoleId: qualificationDetails.userRoleId,
+                userQualificationId: null,
+                institutionName: "",
+                institutionAddress: "",
+                country: "",
+                studyingAt: "",
+                stateId: null,
+                districtId: null,
+                pincode: "",
+                levelId: null,
+                annumSal: null
+            };
+            onChange('qualificationDetails', editEmptyQualificationDetails);
+        }
+        else {
+            const emptyQualificationDetails = {
+                userRoleId: qualificationDetails.userRoleId,
+                userQualificationId: null,
+                institutionName: "",
+                institutionAddress: "",
+                country: "",
+                studyingAt: "",
+                stateId: null,
+                districtId: null,
+                pincode: "",
+                levelId: null,
+                annumSal: null
+            };
+            onChange('qualificationDetails', emptyQualificationDetails);
+        }
     }
 
     return (
@@ -103,7 +112,7 @@ const ProfessionalDetails = (props) => {
                             handleChange={handleRadioChange}
                             classes={classes}
                             value={professionalValue}
-                            userRoles={userRoles}
+                            userRoles={seed.userRoles || []}
                         />
                     </Paper>
                 </Grid>
@@ -111,7 +120,7 @@ const ProfessionalDetails = (props) => {
                     item
                     xs={12}
                 >
-                    {professionalValue === 1 && <StudentForm {...props} districts={districts} />}
+                    {professionalValue === 1 && <StudentForm {...studentFormProps} />}
                     {professionalValue === 2 && <ProfessionalForm  {...props} />}
                     {professionalValue === 3 && <HousewivesForm   {...props} />}
                     <AlertBox open={open} handleClose={handleClose} handleClickOpen={handleClickOpen} handleOk={handleOk} professionalValue={professionalValue} />

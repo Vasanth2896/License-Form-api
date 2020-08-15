@@ -6,13 +6,11 @@ import InputText from '../../Common/InputText';
 import { AddressDetailsStyles } from '../../Common/commonStyles'
 import * as apiAction from '../../../apiConfig/apis'
 
-
 const AddressDetails = (props) => {
     const classes = AddressDetailsStyles();
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { addressDetails } = currentState;
-    const [states, setStates] = useState([]);
+    const { addressDetails, seed } = currentState;
     const [districts, setDistricts] = useState([]);
 
     const handleChange = (key, value) => {
@@ -20,20 +18,11 @@ const AddressDetails = (props) => {
         onChange('addressDetails', addressDetails);
     }
 
-    useEffect(()=>{
-        if(addressDetails.stateId !==null){
+    useEffect(() => {
+        if (addressDetails.stateId !== null) {
             getDistrictData(addressDetails.stateId)
         }
-    },[addressDetails.stateId])
-
-    useEffect(() => {
-        getStateData();
-    }, []);
-
-    const getStateData = async () => {
-        const { data } = await apiAction.getStates();
-        setStates(data);
-    }
+    }, [addressDetails.stateId])
 
     const getDistrictData = async (id) => {
         const { data } = await apiAction.getDistricts(id);
@@ -68,7 +57,7 @@ const AddressDetails = (props) => {
                             name='stateId'
                             handleChange={handleChange}
                             value={addressDetails.stateId || ''}
-                            menuOptions={states}
+                            menuOptions={seed.states || []}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -95,13 +84,8 @@ const AddressDetails = (props) => {
                             <Checkbox
                                 color='primary'
                                 onChange={(e) => {
-                                    if (e.target.checked) {
-                                        handleChange('type', 2);
+                                        handleChange('type', seed.addressType[(addressDetails.type + 2) % 2].id);
                                     }
-                                    else {
-                                        handleChange('type', 1);
-                                    }
-                                }
                                 }
                                 checked={addressDetails.type === 2}
                             ></Checkbox>

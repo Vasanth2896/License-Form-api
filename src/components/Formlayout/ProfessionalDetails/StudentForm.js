@@ -1,40 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Paper, Grid, } from "@material-ui/core";
 import _ from 'lodash';
 import InputSelect from '../../Common/InputSelect';
 import InputText from '../../Common/InputText';
 import { professionalDetailsFormStyles } from '../../Common/commonStyles';
-import * as apiAction from '../../../apiConfig/apis';
 
 const StudentForm = (props) => {
     const { state, onChange, districts } = props;
     const currentState = _.cloneDeep(state);
-    const { qualificationDetails } = currentState;
+    const { qualificationDetails,seed } = currentState;
     const classes = professionalDetailsFormStyles();
-    const [states, setStates] = useState([]);
-    const [qualifcationDetails, setQualificationDetails] = useState([]);
-
-
+   
     const handleChange = (key, value) => {
         qualificationDetails[key] = value;
         onChange('qualificationDetails', qualificationDetails);
     }
-
-       useEffect(() => {
-        getStateData();
-        getQualificationData();
-    }, []);
-
-    const getStateData = async () => {
-        const { data } = await apiAction.getStates();
-        setStates(data);
-    }
-
-  const getQualificationData = async () => {
-        const { data } = await apiAction.getQualificationDetails();
-        setQualificationDetails(data);
-    }
-
 
     return (
         <Paper className={classes.professionalDetailsFormStyles}>
@@ -46,7 +26,7 @@ const StudentForm = (props) => {
                             name='userQualificationId'
                             handleChange={handleChange}
                             value={qualificationDetails.userQualificationId || ''}
-                            menuOptions={qualifcationDetails}
+                            menuOptions={seed.qualifcationDetailsSeed || []}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -87,7 +67,7 @@ const StudentForm = (props) => {
                             name='stateId'
                             handleChange={handleChange}
                             value={qualificationDetails.stateId || ''}
-                            menuOptions={states}
+                            menuOptions={seed.states || []}
                         />
                     </Grid>
                     <Grid item xs={6}>

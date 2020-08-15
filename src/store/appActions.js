@@ -13,7 +13,7 @@ export const initialState = {
         motherTongueId: null,
         preferredLanguageId: [],
         knownViaProducts: [],
-        other: ''
+        others: ''
     },
     addressDetails: {
         address: "",
@@ -42,10 +42,11 @@ export const initialState = {
         nameHelperText: '',
         mailIdHelperText: '',
     },
-    editableIndex: null,
-    editUserId: null,
+    editFlag: false,
+    editId: null,
     userList: [],
     user: {},
+    seed: {},
 }
 
 export function app_onChange(name, value) {
@@ -54,11 +55,11 @@ export function app_onChange(name, value) {
 
 export function errorValidation() {
     return (dispatch, getState) => {
-        const { personalDetails, userList, personalDetailError, editableIndex } = getState().appReducer;
+        const { personalDetails, userList, personalDetailError, editId } = getState().appReducer;
         const { name, mailId } = personalDetails;
         const mailIdRegex = /^([A-Z a-z][\w\d . _ -]+)@([\w\d _-]+).([a-z]{2,20})(\.[a-z]{2,10})$/;
-        const newUserList = editableIndex !== null ? userList.filter((user, index) => { return index !== editableIndex }) : userList;
-        const emailDuplicateFlag = newUserList.some(user => user.personalDetails.mailId === mailId);
+        const newUserList = editId !== null ? userList.filter((user) => { return editId !== user.id }) : userList;
+        const emailDuplicateFlag = newUserList.some(user => user.mailId === mailId);
 
         if (emailDuplicateFlag) {
             personalDetailError.mailIdError = true;
@@ -100,20 +101,28 @@ export function onCancel() {
         dispatch(app_onChange('addressDetails', addressDetails));
         dispatch(app_onChange('qualificationDetails', qualificationDetails));
         dispatch(app_onChange('personalDetailError', { nameError: false, mailIdError: false, nameHelperText: "", mailIdHelperText: "" }));
-        dispatch(app_onChange('editableIndex', null));
+        dispatch(app_onChange('editFlag', false));
         dispatch(app_onChange('editUserId', null));
     }
 }
 
 export function onSave() {
     return (dispatch, getState) => {
-        const { personalDetails, addressDetails, qualificationDetails, user } = getState().appReducer;
+        const { personalDetails, addressDetails, qualificationDetails, userList, user, editFlag, editId } = getState().appReducer;
         Object.assign(user, {
             personalDetails: personalDetails,
             addressDetails: addressDetails,
             qualificationDetails: qualificationDetails
         })
-        apiAction.createUser(user);
+        if (editFlag) {
+            apiAction.updateUser(user, editId);
+        }
+        else {
+            console.log(user);
+            apiAction.createUser(user);
+        }
+        dispatch(app_onChange('editFlag', false));
+        dispatch(app_onChange('user', {}));
 
 
 
@@ -154,26 +163,34 @@ export function onSave() {
     }
 }
 
-export function onDelete(deleteData) {
+export function onDelete(deleteUser) {
     return (dispatch, getState) => {
-        console.log(deleteData);
-        const { userList } = getState().appReducer
-        const newUserList = userList.filter(user => JSON.stringify(user) !== JSON.stringify(deleteData));
+        const { userList } = getState().appReducer;
+        apiAction.deleteUserById(deleteUser.id);
+        const newUserList = userList.filter(user => deleteUser.id !== user.id);
         dispatch(app_onChange('userList', newUserList));
     }
 }
 
-export function onEdit(editableIndex, editableData) {
-    return (dispatch) => {
-        dispatch(app_onChange('personalDetails', editableData.personalDetails));
-        dispatch(app_onChange('addressDetails', editableData.addressDetails));
-        dispatch(app_onChange('student', editableData.student));
-        dispatch(app_onChange('professional', editableData.professional));
-        dispatch(app_onChange('professionalDetailToggle', editableData.professionalDetailToggle));
-        dispatch(app_onChange('editableIndex', editableIndex));
-        dispatch(app_onChange('editUserId', editableData.id));
-    }
-}
+// export function onEdit(editableIndex, editableData) {
+//     return (dispatch) => {
+//         const test = async () => {
+//             const testdata = await apiAction.getUserById(editableData.id)
+//             console.log(testdata.data);
+//             // dispatch(app_onChange('personalDetails', testdata.data));
+//         }
+//         test();
+
+
+//         // dispatch(app_onChange('personalDetails', editableData.personalDetails));
+//         // dispatch(app_onChange('addressDetails', editableData.addressDetails));
+//         // dispatch(app_onChange('student', editableData.student));
+//         // dispatch(app_onChange('professional', editableData.professional));
+//         // dispatch(app_onChange('professionalDetailToggle', editableData.professionalDetailToggle));
+//         // dispatch(app_onChange('editableIndex', editableIndex));
+//         // dispatch(app_onChange('editUserId', editableData.id));
+//     }
+// }
 
 
 export const AppReducer = (state = initialState, action) => {

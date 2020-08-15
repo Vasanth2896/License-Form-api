@@ -5,11 +5,11 @@ import { footerButtonStyles } from "../../Common/commonStyles";
 const ProfessionalDetailFooter = (props) => {
 
     const { history, handleBack, errorValidation, onSave, setActiveStep, state } = props;
-    const { editableIndex } = state;
+    const { editFlag } = state;
     const classes = footerButtonStyles();
 
-    const handleSave = () => {
-        const isValid = errorValidation();
+    const handleSave = async () => {
+        const isValid =  await errorValidation();
         if (isValid) {
             onSave();
             history.push('/');
@@ -32,7 +32,7 @@ const ProfessionalDetailFooter = (props) => {
                 variant='contained'
                 onClick={handleSave}
                 className={classes.proceed}
-            >{editableIndex !== null ? 'update':'save'}</Button>
+            >{editFlag ? 'update':'save'}</Button>
         </div>
     )
 }

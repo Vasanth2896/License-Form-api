@@ -1,6 +1,16 @@
 import { apiInstance } from './index';
 import * as apiRoutes from './apiRoutes';
 
+export const getAddressType = () => {
+    try {
+        const response = apiInstance.get(apiRoutes.addressType);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
 export const getGender = () => {
     try {
         const response = apiInstance.get(apiRoutes.gender);
@@ -14,7 +24,7 @@ export const getGender = () => {
 export const getLanguages = () => {
     try {
         const response = apiInstance.get(apiRoutes.languages);
-        return response;
+        return response
     }
     catch (err) {
         return err;
@@ -24,7 +34,7 @@ export const getLanguages = () => {
 export const getStates = () => {
     try {
         const response = apiInstance.get(apiRoutes.states);
-        return response;
+        return response
     }
     catch (err) {
         return err;
@@ -94,7 +104,7 @@ export const getUserRoles = () => {
 
 export const getAllUsers = () => {
     try {
-        const response = apiInstance.get(apiRoutes.AllUsers);
+        const response = apiInstance.get(apiRoutes.allUsers);
         return response;
     }
     catch (err) {
@@ -108,6 +118,36 @@ export const createUser = (user) => {
         const response = apiInstance.post(apiRoutes.createUsers, {
             ...user
         });
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+export const getUserById = async (editId) => {
+    try {
+        const response = await apiInstance.get(`${apiRoutes.UsersById + editId}`);
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+export const updateUser = (user, updateId) => {
+    try {
+        const response = apiInstance.put(apiRoutes.updateUser + `${updateId}`, {...user});
+        return response;
+    }
+    catch (err) {
+        return err;
+    }
+}
+
+export const deleteUserById = (deleteId) => {
+    try {
+        const response = apiInstance.delete(`${apiRoutes.deleteUserById + deleteId}`);
         return response;
     }
     catch (err) {

@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     TextField, Paper, Grid, Box
 } from '@material-ui/core';
 import _ from 'lodash'
 import InputSelect from '../../Common/InputSelect';
-import * as apiAction from '../../../apiConfig/apis';
 import CheckboxGroup from './CheckboxGroup';
 import { personalDetailStyles } from "../../Common/commonStyles";
 import DatePicker from "./DatePicker";
@@ -14,11 +13,8 @@ import Gender from './Gender'
 const PersonalDetails = (props) => {
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { personalDetails, personalDetailError } = currentState;
+    const { personalDetails, personalDetailError, seed } = currentState;
     const classes = personalDetailStyles();
-    const [language, setLanguage] = useState([]);
-    const [knowledgeSeed, setKnowledgeSeed] = useState([]);
-    const [gender, setGender] = useState([]);
 
     const handleChange = (key, value) => {
         personalDetails[key] = value;
@@ -30,29 +26,6 @@ const PersonalDetails = (props) => {
 
         onChange('personalDetails', personalDetails);
     }
-
-    useEffect(() => {
-        getLanguageData();
-        getKnowledgeSeed();
-        getGenderData();
-    }, []);
-
-    const getLanguageData = async () => {
-        const { data } = await apiAction.getLanguages();
-        setLanguage(data);
-    }
-
-    const getKnowledgeSeed = async () => {
-        const { data } = await apiAction.getKnownViaProducts();
-        setKnowledgeSeed(data);
-    }
-
-    const getGenderData = async () => {
-        const { data } = await apiAction.getGender();
-        setGender(data);
-    }
-
-
 
     return (
         <Paper style={{ background: '#8080801f', height: 'auto' }} elevation={2}>
@@ -75,7 +48,7 @@ const PersonalDetails = (props) => {
                     <Grid item xs={6}>
                         <Gender
                             personalDetails={personalDetails}
-                            genderList={gender}
+                            genderList={seed.gender || []}
                             classes={classes}
                             handleChange={handleChange}
                         />
@@ -129,20 +102,20 @@ const PersonalDetails = (props) => {
                             name='motherTongueId'
                             handleChange={handleChange}
                             value={personalDetails.motherTongueId || ''}
-                            menuOptions={language}
+                            menuOptions={seed.language || []}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         < LanguageAutoComplete
                             personalDetails={personalDetails}
-                            languages={language}
+                            languages={seed.language || []}
                             handleChange={handleChange}
                         />
                     </Grid>
                     <Grid item xs={12}>
                         <CheckboxGroup
                             formLabel='How you come to know about the product?'
-                            knowledgeSeed={knowledgeSeed}
+                            knowledgeSeed={seed.knowledgeSeed || []}
                             personalDetails={personalDetails}
                             onChange={onChange}
                             formGroupClassName={classes.feedbackCheckboxContainer}
@@ -150,13 +123,12 @@ const PersonalDetails = (props) => {
                     </Grid>
                     <Grid item xs={12}>
                         <Box className={personalDetails.knownViaProducts.includes(6) ? classes.showOrder : classes.hideOrder} >
-                            {/* <Box> */}
                             <TextField
                                 fullWidth
                                 variant='filled'
                                 label='Other'
-                                value={personalDetails.other || ''}
-                                onChange={(e) => handleChange('other', e.target.value)}
+                                value={personalDetails.others || ''}
+                                onChange={(e) => handleChange('others', e.target.value)}
                             />
                         </Box>
                     </Grid>

@@ -1,37 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Paper, Grid } from "@material-ui/core";
 import _ from 'lodash';
 import InputSelect from '../../Common/InputSelect';
 import { professionalDetailsFormStyles } from '../../Common/commonStyles';
-import * as apiAction from '../../../apiConfig/apis';
 
 const ProfessionalForm = (props) => {
     const classes = professionalDetailsFormStyles();
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { qualificationDetails } = currentState;
-    const [professionalLevel, setProfessionalLevel] = useState([]);
-    const [salary, setSalary] = useState([]);
+    const { qualificationDetails, seed } = currentState;
+
 
     const handleChange = (key, value) => {
         qualificationDetails[key] = value;
         onChange('qualificationDetails', qualificationDetails);
-    }
-
-    useEffect(() => {
-        getProfessionalLevelData();
-        getSalaryData();
-    }, []);
-
-
-    const getProfessionalLevelData = async () => {
-        const { data } = await apiAction.getProfessionalLevel();
-        setProfessionalLevel(data);
-    }
-
-    const getSalaryData = async () => {
-        const { data } = await apiAction.getSalaryPerAnnum();
-        setSalary(data);
     }
 
     return (
@@ -44,7 +26,7 @@ const ProfessionalForm = (props) => {
                             name='levelId'
                             handleChange={handleChange}
                             value={qualificationDetails.levelId || ''}
-                            menuOptions={professionalLevel}
+                            menuOptions={seed.professionalLevel || []}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -53,7 +35,7 @@ const ProfessionalForm = (props) => {
                             name='annumSal'
                             handleChange={handleChange}
                             value={qualificationDetails.annumSal || ''}
-                            menuOptions={salary}
+                            menuOptions={seed.salary || []}
                         />
                     </Grid>
                 </Grid>

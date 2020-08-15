@@ -3,14 +3,15 @@ import './TableLayout.scss';
 import ReactTable from 'react-table-v6'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { app_onChange, onCancel, onEdit, onDelete } from '../../store/appActions';
+import { app_onChange, onCancel, onDelete } from '../../store/appActions';
 import _ from 'lodash';
 import TableHeaderContent from "./TableHeaderContent";
 import ActionComponent from "./ActionComponent";
 import SearchBox from "./SearchBox";
+import * as apiAction from '../../apiConfig/apis'
 
 const TableLayout = (props) => {
-    const { history, state, onCancel, onEdit, onDelete } = props;
+    const { history, state, onChange, onCancel, onDelete } = props;
     const currentState = _.cloneDeep(state);
     const { userList } = currentState;
 
@@ -29,12 +30,21 @@ const TableLayout = (props) => {
         searchInput, usernameSort, mailIdSort, mobileNumberSort,
         professionSort, addressSort, stateSort, districtSort } = userTableState;
 
-    let newFilteredData = [];
-
 
     useEffect(() => {
-        setUserTableState({ ...userTableState, filteredData: userList });
-    }, [state])
+        loadAllUsers();
+    }, []);
+
+
+    const loadAllUsers = async () => {
+        const getAllUsersData = await apiAction.getAllUsers();
+        setUserTableState({ ...userTableState, filteredData: getAllUsersData })
+        onChange('userList', getAllUsersData.data);
+    }
+
+    // useEffect(() => {
+    //     setUserTableState({ ...userTableState, filteredData: userList });
+    // }, [state])
 
     const handleSortChangeStyle = (props) => {
         if (props[0].id !== '') {
@@ -49,23 +59,26 @@ const TableLayout = (props) => {
     }
 
     useEffect(() => {
-        searchInput ? globalSearchFilter() : setUserTableState({ ...userTableState, filteredData: userList });
+        // setUserTableState({ ...userTableState, filteredData: userList });
+        searchInput.length ? globalSearchFilter() : setUserTableState({ ...userTableState, filteredData: userList });
     }, [searchInput, state]);
 
 
     const globalSearchFilter = () => {
         if (searchInput) {
-            newFilteredData = userList.filter(user => {
+            let newFilteredData = userList.filter(user => {
                 return (
-                    user.personalDetails.username.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    user.personalDetails.mailId.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    user.personalDetails.mobileNumber.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    user.professionalDetailToggle.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    user.addressDetails.communicationAddress.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    user.addressDetails.district.toLowerCase().includes(searchInput.toLowerCase()) ||
-                    user.addressDetails.state.toLowerCase().includes(searchInput.toLowerCase())
-                );
+                    user.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    user.mailId.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    user.mob.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    user.userRole.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    user.address.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    user.district.toLowerCase().includes(searchInput.toLowerCase()) ||
+                    user.state.toLowerCase().includes(searchInput.toLowerCase())
+                )
             });
+
+
             newFilteredData.length ?
                 setUserTableState({ ...userTableState, filteredData: newFilteredData }) : setUserTableState({ ...userTableState, filteredData: [] });
 
@@ -75,49 +88,49 @@ const TableLayout = (props) => {
     const columns = [
         {
             Header: <TableHeaderContent columnName='User name' columnSortState={usernameSort} />,
-            id: 'username',
-            accessor: user => user.personalDetails.username
+            id: 'name',
+            accessor: user => user.name
         },
         {
             Header: <TableHeaderContent columnName='Mail id' columnSortState={mailIdSort} />,
             id: 'mailId',
-            accessor: user => user.personalDetails.mailId
+            accessor: user => user.mailId
         },
         {
             Header: <TableHeaderContent columnName='Mobile no' columnSortState={mobileNumberSort} />,
             id: 'mobileNumber',
-            accessor: user => user.personalDetails.mobileNumber
+            accessor: user => user.mob
         },
         {
             Header: <TableHeaderContent columnName='Profession' columnSortState={professionSort} />,
             id: 'profession',
-            accessor: user => user.professionalDetailToggle
+            accessor: user => user.userRole
         },
         {
             Header: <TableHeaderContent columnName='Address' columnSortState={addressSort} />,
             id: 'address',
-            accessor: user => user.addressDetails.communicationAddress
+            accessor: user => user.address
         },
         {
             Header: <TableHeaderContent columnName='District' columnSortState={districtSort} />,
             id: 'district',
-            accessor: user => user.addressDetails.district
+            accessor: user => user.district
         },
         {
             Header: <TableHeaderContent columnName='State' columnSortState={stateSort} />,
             id: 'state',
-            accessor: user => user.addressDetails.state
+            accessor: user => user.state
         },
         {
             Header: '',
             accessor: '',
-            Cell: ({ value, index }) => {
+            Cell: ({ value }) => {
                 return (
                     <div className='actionsContainer'  >
                         <ActionComponent
                             value={value}
-                            index={index}
-                            onEdit={onEdit}
+                            userList={userList}
+                            onChange={onChange}
                             onDelete={onDelete}
                             userTableState={userTableState}
                             setUserTableState={setUserTableState}
@@ -170,7 +183,6 @@ const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         onChange: app_onChange,
         onCancel: onCancel,
-        onEdit: onEdit,
         onDelete: onDelete
     }, dispatch)
 }
