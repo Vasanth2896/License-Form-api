@@ -108,7 +108,7 @@ export function onCancel() {
 
 export function onSave() {
     return (dispatch, getState) => {
-        const { personalDetails, addressDetails, qualificationDetails, userList, user, editFlag, editId } = getState().appReducer;
+        const { personalDetails, addressDetails, qualificationDetails, user, editFlag, editId } = getState().appReducer;
         Object.assign(user, {
             personalDetails: personalDetails,
             addressDetails: addressDetails,
@@ -123,43 +123,6 @@ export function onSave() {
         }
         dispatch(app_onChange('editFlag', false));
         dispatch(app_onChange('user', {}));
-
-
-
-
-
-        // const { personalDetails, addressDetails, professional,
-        //     student, professionalDetailToggle, userList, editableIndex, editUserId } = getState().appReducer;
-        // const restoreInitialState = _.cloneDeep(initialState);
-        // if (editableIndex === null) {
-        //     userList.push({
-        //         id: globalId++,
-        //         personalDetails: personalDetails,
-        //         addressDetails: addressDetails,
-        //         professional: professional,
-        //         student: student,
-        //         professionalDetailToggle: professionalDetailToggle,
-        //     })
-        // }
-        // else {
-        //     const newEditeduser = {
-        //         id: editUserId,
-        //         personalDetails: personalDetails,
-        //         addressDetails: addressDetails,
-        //         professional: professional,
-        //         student: student,
-        //         professionalDetailToggle: professionalDetailToggle,
-        //     }
-        //     userList.splice(editableIndex, 1, newEditeduser);
-        // }
-        // dispatch(app_onChange('userList', userList));
-        // dispatch(app_onChange('personalDetails', restoreInitialState.personalDetails));
-        // dispatch(app_onChange('addressDetails', restoreInitialState.addressDetails));
-        // dispatch(app_onChange('professional', restoreInitialState.professional));
-        // dispatch(app_onChange('student', restoreInitialState.student));
-        // dispatch(app_onChange('professionalDetailToggle', restoreInitialState.professionalDetailToggle));
-        // dispatch(app_onChange('personalDetailError', { nameError: false, mailIdError: false, nameHelperText: "", mailIdHelperText: "" }));
-        // dispatch(app_onChange('editableIndex', null));
     }
 }
 
@@ -171,27 +134,6 @@ export function onDelete(deleteUser) {
         dispatch(app_onChange('userList', newUserList));
     }
 }
-
-// export function onEdit(editableIndex, editableData) {
-//     return (dispatch) => {
-//         const test = async () => {
-//             const testdata = await apiAction.getUserById(editableData.id)
-//             console.log(testdata.data);
-//             // dispatch(app_onChange('personalDetails', testdata.data));
-//         }
-//         test();
-
-
-//         // dispatch(app_onChange('personalDetails', editableData.personalDetails));
-//         // dispatch(app_onChange('addressDetails', editableData.addressDetails));
-//         // dispatch(app_onChange('student', editableData.student));
-//         // dispatch(app_onChange('professional', editableData.professional));
-//         // dispatch(app_onChange('professionalDetailToggle', editableData.professionalDetailToggle));
-//         // dispatch(app_onChange('editableIndex', editableIndex));
-//         // dispatch(app_onChange('editUserId', editableData.id));
-//     }
-// }
-
 
 export const AppReducer = (state = initialState, action) => {
     switch (action.type) {

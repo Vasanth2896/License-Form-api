@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FormLayout = (props) => {
     const { state, history, onChange } = props;
-    const { personalDetails, addressDetails, qualifcationDetails, personalDetailError } = state;
+    const { personalDetails, addressDetails, qualificationDetails, personalDetailError } = state;
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
@@ -79,34 +79,23 @@ const FormLayout = (props) => {
         onChange('seed', seedHolder);
     }
 
+    function handleBlankSpace(detail) {
+        return !detail.toString().replace(/\s/g, '').length <= 0;
+    }
 
+    function personalDetailsValidator(textFields, objectFields, collectionFields) {
+        const collectionValidation = Object.values(collectionFields).every(collection => collection.length);
+        const objectValidation = Object.values(objectFields).every(field => field !== null);
+        const textValidation = Object.values(textFields).every(detail => handleBlankSpace(detail));
+        const otherIsChecked = collectionValidation && objectValidation && textValidation && collectionFields.knownViaProducts.includes(6) && handleBlankSpace(personalDetails.others);
+        const otherIsNotChecked = collectionValidation && objectValidation && textValidation && !collectionFields.knownViaProducts.includes(6)
 
+        if (otherIsChecked || otherIsNotChecked) {
+            return true;
+        }
 
-
-
-
-    // function handleBlankSpace(detail){
-    //     return !detail.toString().replace(/\s/g, '').length <= 0;
-    // }
-
-    // function CheckPersonalDetailsStep() {
-    //     const { dateOfBirth, preferredLanguage, productKnowledge, other, ...textDetails } = personalDetails;
-    //     const productKnowledgeChecked = Object.values(productKnowledge).some(checked => checked);
-    //     const textDetailsFilled = Object.values(textDetails).every(detail => handleBlankSpace(detail));
-    //     const otherIsChecked = dateOfBirth && preferredLanguage.length &&
-    //         productKnowledgeChecked && textDetailsFilled && productKnowledge.otherCheck && other !== '';
-    //     const otherIsNotChecked = dateOfBirth && preferredLanguage.length
-    //         && productKnowledgeChecked && textDetailsFilled && !productKnowledge.otherCheck;
-
-
-
-    //     if (otherIsChecked || otherIsNotChecked) {
-    //         return true;
-    //     }
-
-    //     return false;
-    // }
-
+        return false;
+    }
 
     useEffect(() => {
         const { action, location } = history;
@@ -114,7 +103,7 @@ const FormLayout = (props) => {
             const popStep = steps.find(step => step.routePath === location.pathname);
             setActiveStep(popStep.id);
         }
-    });
+    },[]);
 
     const backButtonNavigation = (stepItem) => {
         if (stepItem.id) {
@@ -132,29 +121,52 @@ const FormLayout = (props) => {
     };
 
 
-    // useEffect(() => {
-    //     const personalDetailFlag = CheckPersonalDetailsStep();
-    //     handleComplete(personalDetailFlag, 0);
+    useEffect(() => {
+        const { age, dateOfBirth, knownViaProducts, mailId, mobNo, motherTongueId, name, preferredLanguageId } = personalDetails;
+        const personalDetailTextField = { age, mailId, mobNo, name };
+        const personalDetailObjectFields = { dateOfBirth, motherTongueId };
+        const personalDetailsCollections = { knownViaProducts, preferredLanguageId };
+        const personalValidator = personalDetailsValidator(personalDetailTextField, personalDetailObjectFields, personalDetailsCollections);
+        handleComplete(personalValidator, 0);
+    }, [personalDetails]);
 
-    // }, [personalDetails]);
+    function addressDetailsValidator(idFields, textFields) {
+        const validation = Object.values(idFields).every(id => id !== null) && Object.values(textFields).every(detail => handleBlankSpace(detail));
+        return validation;
+    }
 
 
-    // useEffect(() => {
-    //     setErrorFree(newErrorFree);
-    //     handleComplete(Object.values(addressDetails).every(detail => handleBlankSpace(detail)), 1);
-    //     if (professionalDetailToggle === 'housewives') {
-    //         handleComplete(true, 2);
-    //     }
-    //     else {
-    //         handleComplete(Object.values(state[professionalDetailToggle]).every(detail =>  handleBlankSpace(detail)), 2);
-    //     }
+    useEffect(() => {
+        const { stateId, districtId, address, country, pincode } = addressDetails;
+        const addressDetailsIdFields = { stateId, districtId };
+        const addressDetailsTextField = { address, country, pincode };
+        const addressValidator = addressDetailsValidator(addressDetailsIdFields, addressDetailsTextField);
+        handleComplete(addressValidator, 1);
+    }, [addressDetails])
 
-    // }, [professional, student, professionalDetailToggle, addressDetails, newErrorFree]);
 
-     useEffect(() => {
+    useEffect(() => {
+        if (qualificationDetails.userRoleId === 3) {
+            handleComplete(true, 2);
+        }
+        else if (qualificationDetails.userRoleId === 2) {
+            const { levelId, annumSal } = qualificationDetails;
+            const professionalFormFields = { levelId, annumSal };
+            handleComplete(Object.values(professionalFormFields).every(field => field !== null), 2);
+        }
+        else if (qualificationDetails.userRoleId === 1) {
+            const { institutionName, institutionAddress, country,
+                studyingAt, pincode, userQualificationId, stateId, districtId } = qualificationDetails;
+            const studentFormTextFields = { institutionName, institutionAddress, country, studyingAt, pincode }
+            const studentFormIdFields = { userQualificationId, stateId, districtId }
+            const studentFormValidation = Object.values(studentFormTextFields).every(detail => handleBlankSpace(detail)) &&
+                Object.values(studentFormIdFields).every(id => id !== null);
+            handleComplete(studentFormValidation, 2)
+        }
+    }, [qualificationDetails])
+
+    useEffect(() => {
         setErrorFree(newErrorFree);
-      
-
     }, [newErrorFree]);
 
     const handleNext = () => {

@@ -15,7 +15,7 @@ const CheckboxGroup = (props) => {
         personalDetails['knownViaProducts'] = handleProducts;
 
         if (!personalDetails.knownViaProducts.includes(6)) {
-            personalDetails['other'] = ''
+            personalDetails['others'] = ''
         }
 
         onChange('personalDetails', personalDetails)
