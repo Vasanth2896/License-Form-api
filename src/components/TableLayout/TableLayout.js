@@ -8,6 +8,7 @@ import _ from 'lodash';
 import TableHeaderContent from "./TableHeaderContent";
 import ActionComponent from "./ActionComponent";
 import SearchBox from "./SearchBox";
+import ServerErrorAlert from "./ServerErrorAlert";
 import * as apiAction from '../../apiConfig/apis'
 
 const TableLayout = (props) => {
@@ -24,7 +25,8 @@ const TableLayout = (props) => {
         professionSort: false,
         addressSort: false,
         stateSort: false,
-        districtSort: false
+        districtSort: false,
+        apiError: false
     });
     const { filteredData,
         searchInput, usernameSort, mailIdSort, mobileNumberSort,
@@ -38,13 +40,14 @@ const TableLayout = (props) => {
 
     const loadAllUsers = async () => {
         const getAllUsersData = await apiAction.getAllUsers();
-        setUserTableState({ ...userTableState, filteredData: getAllUsersData })
-        onChange('userList', getAllUsersData.data);
+        if (getAllUsersData.request.status === 201) {
+            onChange('userList', getAllUsersData.data);
+        }
+        else {
+            setUserTableState({ ...userTableState, apiError: true });
+        }
     }
 
-    // useEffect(() => {
-    //     setUserTableState({ ...userTableState, filteredData: userList });
-    // }, [state])
 
     const handleSortChangeStyle = (props) => {
         if (props[0].id !== '') {
@@ -59,7 +62,6 @@ const TableLayout = (props) => {
     }
 
     useEffect(() => {
-        // setUserTableState({ ...userTableState, filteredData: userList });
         searchInput.length ? globalSearchFilter() : setUserTableState({ ...userTableState, filteredData: userList });
     }, [searchInput, state]);
 
@@ -144,33 +146,70 @@ const TableLayout = (props) => {
     ];
 
     return (
-        <div className='tableLayoutContainer'>
-            <div className='tableLayoutHeader' >
-                <div className='userListHeader'>
-                    <h3>Individual Users</h3>
-                    <h3>&nbsp;({userList.length})</h3>
+        <div>
+            {!userTableState.apiError ? (
+                <div className='tableLayoutContainer'>
+                    <div className='tableLayoutHeader' >
+                        <div className='userListHeader'>
+                            <h3>Individual Users</h3>
+                            <h3>&nbsp;({userList.length})</h3>
+                        </div>
+                        <SearchBox
+                            handleSearchInputchange={handleSearchInputchange}
+                            searchInput={searchInput}
+                            history={history}
+                            onCancel={onCancel}
+                        />
+                    </div>
+                    {!filteredData.length || !userList.length ? <div><h1>There is no user</h1></div> :
+                        <div>
+                            <ReactTable
+                                data={filteredData}
+                                columns={columns}
+                                className='-striped -highlight'
+                                minRows={0}
+                                onSortedChange={(props) => handleSortChangeStyle(props)}
+                                showPagination={false}
+                            />
+                        </div>
+                    }
                 </div>
-                <SearchBox
-                    handleSearchInputchange={handleSearchInputchange}
-                    searchInput={searchInput}
-                    history={history}
-                    onCancel={onCancel}
-                />
-            </div>
-            {!filteredData.length || !userList.length ? <div><h1>There is no user</h1></div> :
-                <div>
-                    <ReactTable
-                        data={filteredData}
-                        columns={columns}
-                        className='-striped -highlight'
-                        minRows={0}
-                        onSortedChange={(props) => handleSortChangeStyle(props)}
-                        showPagination={false}
-                    />
-                </div>
-            }
+            ) : (
+                   <ServerErrorAlert />
+                )}
         </div>
+
     )
+
+    // return (
+
+    //     <div className='tableLayoutContainer'>
+    //         <div className='tableLayoutHeader' >
+    //             <div className='userListHeader'>
+    //                 <h3>Individual Users</h3>
+    //                 <h3>&nbsp;({userList.length})</h3>
+    //             </div>
+    //             <SearchBox
+    //                 handleSearchInputchange={handleSearchInputchange}
+    //                 searchInput={searchInput}
+    //                 history={history}
+    //                 onCancel={onCancel}
+    //             />
+    //         </div>
+    //         {!filteredData.length || !userList.length ? <div><h1>There is no user</h1></div> :
+    //             <div>
+    //                 <ReactTable
+    //                     data={filteredData}
+    //                     columns={columns}
+    //                     className='-striped -highlight'
+    //                     minRows={0}
+    //                     onSortedChange={(props) => handleSortChangeStyle(props)}
+    //                     showPagination={false}
+    //                 />
+    //             </div>
+    //         }
+    //     </div>
+    // )
 }
 
 const mapStateToProps = (state) => {

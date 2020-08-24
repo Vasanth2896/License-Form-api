@@ -9,14 +9,20 @@ const ProfessionalDetailFooter = (props) => {
     const classes = footerButtonStyles();
 
     const handleSave = async () => {
-        const isValid =  await errorValidation();
+        const isValid = await errorValidation();
         if (isValid) {
-            onSave();
-            history.push('/');
+            saveAndRender()
         }
         else {
             setActiveStep(0);
             history.push('/layout/PersonalDetails');
+        }
+    }
+
+    const saveAndRender = async () => {
+        const wait = await onSave();
+        if (wait) {
+            history.push('/');
         }
     }
 
@@ -32,7 +38,7 @@ const ProfessionalDetailFooter = (props) => {
                 variant='contained'
                 onClick={handleSave}
                 className={classes.proceed}
-            >{editFlag ? 'update':'save'}</Button>
+            >{editFlag ? 'update' : 'save'}</Button>
         </div>
     )
 }

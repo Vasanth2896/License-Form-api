@@ -13,7 +13,8 @@ export const apiInstance = axios.create({
 apiInstance.interceptors.response.use(response => {
     console.log(response);
     return response;
-}, error => {
+}, 
+error => {
     console.log(error);
     return Promise.reject(error);
 });

@@ -27,6 +27,7 @@ const FormLayout = (props) => {
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
     const [errorFree, setErrorFree] = useState(false);
+    const [apiError,setApiError] = useState(false);
     const newCompleted = { ...completed };
     const newErrorFree = personalDetailError.nameError || personalDetailError.mailIdError;
     const steps = [
@@ -63,6 +64,14 @@ const FormLayout = (props) => {
         const getAddressTypeData = await apiAction.getAddressType();
         const getAllUsersData = await apiAction.getAllUsers();
 
+        const allSeedApis = [getStateData, getGenderData, getLanguagesData, getQualificationDetailsData,
+            getProfessionalLevelData, getSalaryPerAnnumData, getKnowledgeSeedData, getUserRolesData
+            , getAddressTypeData];
+        const apiSeedValidation = allSeedApis.some(data => data.request.status !== 200);
+
+        const getAllUsersDataStatus = getAllUsersData.request.status !== 201;
+       a
+
         const seedHolder = {
             states: getStateData.data,
             gender: getGenderData.data,
@@ -83,27 +92,13 @@ const FormLayout = (props) => {
         return !detail.toString().replace(/\s/g, '').length <= 0;
     }
 
-    function personalDetailsValidator(textFields, objectFields, collectionFields) {
-        const collectionValidation = Object.values(collectionFields).every(collection => collection.length);
-        const objectValidation = Object.values(objectFields).every(field => field !== null);
-        const textValidation = Object.values(textFields).every(detail => handleBlankSpace(detail));
-        const otherIsChecked = collectionValidation && objectValidation && textValidation && collectionFields.knownViaProducts.includes(6) && handleBlankSpace(personalDetails.others);
-        const otherIsNotChecked = collectionValidation && objectValidation && textValidation && !collectionFields.knownViaProducts.includes(6)
-
-        if (otherIsChecked || otherIsNotChecked) {
-            return true;
-        }
-
-        return false;
-    }
-
     useEffect(() => {
         const { action, location } = history;
         if (action === 'POP') {
             const popStep = steps.find(step => step.routePath === location.pathname);
             setActiveStep(popStep.id);
         }
-    },[]);
+    }, []);
 
     const backButtonNavigation = (stepItem) => {
         if (stepItem.id) {
@@ -119,6 +114,20 @@ const FormLayout = (props) => {
         newCompleted[currentStep] = completeflag;
         setCompleted({ ...newCompleted });
     };
+
+    function personalDetailsValidator(textFields, objectFields, collectionFields) {
+        const collectionValidation = Object.values(collectionFields).every(collection => collection.length);
+        const objectValidation = Object.values(objectFields).every(field => field !== null);
+        const textValidation = Object.values(textFields).every(detail => handleBlankSpace(detail));
+        const otherIsChecked = collectionValidation && objectValidation && textValidation && collectionFields.knownViaProducts.includes(6) && handleBlankSpace(personalDetails.others);
+        const otherIsNotChecked = collectionValidation && objectValidation && textValidation && !collectionFields.knownViaProducts.includes(6)
+
+        if (otherIsChecked || otherIsNotChecked) {
+            return true;
+        }
+
+        return false;
+    }
 
 
     useEffect(() => {
