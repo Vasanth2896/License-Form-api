@@ -11,7 +11,7 @@ const ProfessionalDetailFooter = (props) => {
     const handleSave = async () => {
         const isValid = await errorValidation();
         if (isValid) {
-            saveAndRender()
+            saveData()
         }
         else {
             setActiveStep(0);
@@ -19,9 +19,9 @@ const ProfessionalDetailFooter = (props) => {
         }
     }
 
-    const saveAndRender = async () => {
+    const saveData = async () => {
         const wait = await onSave();
-        if (wait) {
+        if (wait.request.status === 200) {
             history.push('/');
         }
     }

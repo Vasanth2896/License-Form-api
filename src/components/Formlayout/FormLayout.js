@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import NavigationStepper from '../Common/NavigationStepper';
 import * as apiAction from '../../apiConfig/apis'
+import ServerErrorAlert from "../Common/ServerErrorAlert";
+import Loader from '../Common/Loader'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -27,7 +29,7 @@ const FormLayout = (props) => {
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
     const [errorFree, setErrorFree] = useState(false);
-    const [apiError,setApiError] = useState(false);
+    const [apiError, setApiError] = useState(false);
     const newCompleted = { ...completed };
     const newErrorFree = personalDetailError.nameError || personalDetailError.mailIdError;
     const steps = [
@@ -48,10 +50,6 @@ const FormLayout = (props) => {
         }
     ];
 
-    useEffect(() => {
-        loadSeed();
-    }, [])
-
     const loadSeed = async () => {
         const getStateData = await apiAction.getStates();
         const getGenderData = await apiAction.getGender();
@@ -69,8 +67,9 @@ const FormLayout = (props) => {
             , getAddressTypeData];
         const apiSeedValidation = allSeedApis.some(data => data.request.status !== 200);
 
-        const getAllUsersDataStatus = getAllUsersData.request.status !== 201;
-       a
+        if (apiSeedValidation) {
+            setApiError(true);
+        }
 
         const seedHolder = {
             states: getStateData.data,
@@ -87,6 +86,12 @@ const FormLayout = (props) => {
         onChange('userList', getAllUsersData.data);
         onChange('seed', seedHolder);
     }
+
+    useEffect(() => {
+        loadSeed();
+    }, [])
+
+
 
     function handleBlankSpace(detail) {
         return !detail.toString().replace(/\s/g, '').length <= 0;
@@ -194,37 +199,43 @@ const FormLayout = (props) => {
     };
 
     return (
-        <div >
-            <Container style={{ height: '100vh' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', width: '18%', marginBottom: '20px' }}>
-                    <FontAwesomeIcon icon={faArrowLeft} onClick={() => backButtonNavigation(steps[activeStep])} style={{ cursor: 'pointer' }} />
-                    <h3>Individual User</h3>
-                </div>
-                <Grid container spacing={7}>
-                    <Grid item xs={3} style={{ cursor: errorFree ? 'not-allowed' : 'default' }} >
-                        <NavigationStepper
-                            stepperSteps={steps}
-                            stepperClassname={classes.root}
-                            activeStep={activeStep}
-                            handleStep={handleStep}
-                            completed={completed}
-                            disabled={errorFree}
-                        />
-                    </Grid>
-                    <Grid item xs={9}>
-                        <div>
-                            <Redirect from='/' to={'/layout/PersonalDetails'} />
-                            <Switch>
-                                <Route path={'/layout/PersonalDetails'} render={() => <PersonalDetails {...props} />} />
-                                <Route path={'/layout/AddressDetails'} render={() => <AddressDetails {...props} />} />
-                                <Route path={'/layout/ProfessionalDetails'} render={() => <ProfessionalDetails {...props} />} />
-                            </Switch>
+        <div>
+            {!apiError ? (
+                <div>
+                    <Container style={{ height: '100vh' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', width: '18%', marginBottom: '20px' }}>
+                            <FontAwesomeIcon icon={faArrowLeft} onClick={() => backButtonNavigation(steps[activeStep])} style={{ cursor: 'pointer' }} />
+                            <h3>Individual User</h3>
                         </div>
-                    </Grid>
-                </Grid>
-            </Container>
-            <FormFooter handleNext={handleNext} handleBack={handleBack} setActiveStep={setActiveStep} {...props} />
-        </div >
+                        <Grid container spacing={7}>
+                            <Grid item xs={3} style={{ cursor: errorFree ? 'not-allowed' : 'default' }} >
+                                <NavigationStepper
+                                    stepperSteps={steps}
+                                    stepperClassname={classes.root}
+                                    activeStep={activeStep}
+                                    handleStep={handleStep}
+                                    completed={completed}
+                                    disabled={errorFree}
+                                />
+                            </Grid>
+                            <Grid item xs={9}>
+                                <div>
+                                    <Redirect from='/' to={'/layout/PersonalDetails'} />
+                                    <Switch>
+                                        <Route path={'/layout/PersonalDetails'} render={() => <PersonalDetails {...props} />} />
+                                        <Route path={'/layout/AddressDetails'} render={() => <AddressDetails {...props} />} />
+                                        <Route path={'/layout/ProfessionalDetails'} render={() => <ProfessionalDetails {...props} />} />
+                                    </Switch>
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                    <FormFooter handleNext={handleNext} handleBack={handleBack} setActiveStep={setActiveStep} {...props} />
+                </div>
+            ) : (
+                    <ServerErrorAlert />
+                )}
+        </div>
     )
 }
 

@@ -8,7 +8,7 @@ import _ from 'lodash';
 import TableHeaderContent from "./TableHeaderContent";
 import ActionComponent from "./ActionComponent";
 import SearchBox from "./SearchBox";
-import ServerErrorAlert from "./ServerErrorAlert";
+import ServerErrorAlert from "../Common/ServerErrorAlert";
 import * as apiAction from '../../apiConfig/apis'
 
 const TableLayout = (props) => {

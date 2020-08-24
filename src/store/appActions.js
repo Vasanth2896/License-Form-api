@@ -118,11 +118,10 @@ export function onSave() {
             apiAction.updateUser(user, editId);
         }
         else {
-            apiAction.createUser(user);
+           return  apiAction.createUser(user);
         }
         dispatch(app_onChange('editFlag', false));
         dispatch(app_onChange('user', {}));
-        return true
     }
 }
 
