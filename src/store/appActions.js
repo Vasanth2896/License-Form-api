@@ -109,19 +109,21 @@ export function onCancel() {
 export function onSave() {
     return (dispatch, getState) => {
         const { personalDetails, addressDetails, qualificationDetails, user, editFlag, editId } = getState().appReducer;
+        let apiStatus = undefined;
         Object.assign(user, {
             personalDetails: personalDetails,
             addressDetails: addressDetails,
             qualificationDetails: qualificationDetails
         })
         if (editFlag) {
-            apiAction.updateUser(user, editId);
+          apiStatus = apiAction.updateUser(user, editId);
         }
         else {
-           return  apiAction.createUser(user);
+          apiStatus =  apiAction.createUser(user);
         }
         dispatch(app_onChange('editFlag', false));
         dispatch(app_onChange('user', {}));
+        return apiStatus
     }
 }
 

@@ -1,7 +1,7 @@
 import { apiInstance } from './index';
 import * as apiRoutes from './apiRoutes';
 
-export const  getAddressType = async () => {
+export const getAddressType = async () => {
     try {
         const response = await apiInstance.get(apiRoutes.addressType);
         return response;
@@ -103,7 +103,6 @@ export const getUserRoles = async () => {
 }
 
 export const getAllUsers = async () => {
-    // debugger;
     try {
         const response = await apiInstance.get(apiRoutes.allUsers);
         return response;
@@ -145,6 +144,16 @@ export const updateUser = async (user, updateId) => {
         return err;
     }
 }
+
+// export const updateUser = (user, updateId) => {
+//     try {
+//         const response = apiInstance.put(apiRoutes.updateUser + `${updateId}`, { ...user });
+//         return response;
+//     }
+//     catch (err) {
+//         return err;
+//     }
+// }
 
 export const deleteUserById = async (deleteId) => {
     try {
