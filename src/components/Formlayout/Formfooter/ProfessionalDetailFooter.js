@@ -5,12 +5,11 @@ import { footerButtonStyles } from "../../Common/commonStyles";
 const ProfessionalDetailFooter = (props) => {
 
     const { history, handleBack, errorValidation, onSave, setActiveStep, state,setPostCallLoadingStatus } = props;
-    console.log(props);
     const { editFlag } = state;
     const classes = footerButtonStyles();
 
-    const handleSave = async () => {
-        const isValid = await errorValidation();
+    const handleSave =  () => {
+        const isValid =  errorValidation();
         if (isValid) {
             saveData()
         }

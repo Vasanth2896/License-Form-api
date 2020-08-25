@@ -145,15 +145,7 @@ export const updateUser = async (user, updateId) => {
     }
 }
 
-// export const updateUser = (user, updateId) => {
-//     try {
-//         const response = apiInstance.put(apiRoutes.updateUser + `${updateId}`, { ...user });
-//         return response;
-//     }
-//     catch (err) {
-//         return err;
-//     }
-// }
+
 
 export const deleteUserById = async (deleteId) => {
     try {

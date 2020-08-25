@@ -17,6 +17,7 @@ const ActionComponent = (props) => {
     };
 
     const handleEdit = async (value) => {
+        setUserTableState({...userTableState,loadingStatus: true})
         setAnchorEl(null);
         const { data } = await apiAction.getUserById(value.id);
         const removeProperty = ({ addressDetails, qualificationDetails, ...rest }) => rest;

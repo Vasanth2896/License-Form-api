@@ -4,7 +4,7 @@ import { footerButtonStyles } from "../../Common/commonStyles";
 
 const PersonalDetailFooter = (props) => {
 
-    const { history, handleNext, errorValidation,onCancel } = props;
+    const { history, handleNext, errorValidation, onCancel } = props;
     const classes = footerButtonStyles();
 
 
@@ -13,12 +13,14 @@ const PersonalDetailFooter = (props) => {
         onCancel();
     }
 
-    const handleErrorValidation = async () => {
-        const isValid =  await errorValidation();
+
+    const handleErrorValidation = () => {
+        const isValid = errorValidation();
         if (isValid) {
             handleNext();
         }
     }
+
 
     return (
         <div>

@@ -51,6 +51,8 @@ const FormLayout = (props) => {
         }
     ];
 
+
+
     const loadSeed = async () => {
         const getStateData = await apiAction.getStates();
         const getGenderData = await apiAction.getGender();
@@ -83,12 +85,15 @@ const FormLayout = (props) => {
             userRoles: getUserRolesData.data,
             addressType: getAddressTypeData.data
         }
-
+        
+        
         onChange('userList', getAllUsersData.data);
         onChange('seed', seedHolder);
+        
     }
 
-    console.log(postCallLoadingStatus);
+
+
 
     useEffect(() => {
         loadSeed();
