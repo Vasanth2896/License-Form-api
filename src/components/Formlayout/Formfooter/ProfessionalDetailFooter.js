@@ -4,7 +4,7 @@ import { footerButtonStyles } from "../../Common/commonStyles";
 
 const ProfessionalDetailFooter = (props) => {
 
-    const { history, handleBack, errorValidation, onSave, setActiveStep, state,setPostCallLoadingStatus } = props;
+    const { history, handleBack, errorValidation, onSave, setActiveStep, state} = props;
     const { editFlag } = state;
     const classes = footerButtonStyles();
 
@@ -21,9 +21,7 @@ const ProfessionalDetailFooter = (props) => {
 
     const saveData = async () => {
         const wait = await onSave();
-        setPostCallLoadingStatus(true);
         if (wait.request.status === 200) {
-            setPostCallLoadingStatus(false);
             history.push('/');
         }
     }

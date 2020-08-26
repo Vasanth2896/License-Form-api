@@ -30,7 +30,7 @@ const FormLayout = (props) => {
     const [completed, setCompleted] = useState({});
     const [errorFree, setErrorFree] = useState(false);
     const [apiError, setApiError] = useState(false);
-    const [postCallLoadingStatus, setPostCallLoadingStatus] = useState(false);
+    const [formLoadingStatus, setFormLoadingStatus] = useState(true);
     const newCompleted = { ...completed };
     const newErrorFree = personalDetailError.nameError || personalDetailError.mailIdError;
     const steps = [
@@ -90,6 +90,7 @@ const FormLayout = (props) => {
         onChange('userList', getAllUsersData.data);
         onChange('seed', seedHolder);
         
+        setFormLoadingStatus(false);
     }
 
 
@@ -206,7 +207,7 @@ const FormLayout = (props) => {
 
     return (
         <div>
-            {postCallLoadingStatus ? (<Loader />) : (
+            {formLoadingStatus? (<Loader />) : (
                 !apiError ? (
                     <div>
                         <Container style={{ height: '100vh' }}>
@@ -241,7 +242,6 @@ const FormLayout = (props) => {
                             handleNext={handleNext}
                             handleBack={handleBack}
                             setActiveStep={setActiveStep}
-                            setPostCallLoadingStatus={setPostCallLoadingStatus}
                             {...props} />
                     </div>
                 ) : (
