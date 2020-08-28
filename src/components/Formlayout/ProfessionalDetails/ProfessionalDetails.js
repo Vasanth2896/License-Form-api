@@ -123,7 +123,12 @@ const ProfessionalDetails = (props) => {
                     {professionalValue === 1 && <StudentForm {...studentFormProps} />}
                     {professionalValue === 2 && <ProfessionalForm  {...props} />}
                     {professionalValue === 3 && <HousewivesForm   {...props} />}
-                    <AlertBox open={open} handleClose={handleClose} handleClickOpen={handleClickOpen} handleOk={handleOk} professionalValue={professionalValue} />
+                    <AlertBox 
+                    open={open} 
+                    handleClose={handleClose} 
+                    handleClickOpen={handleClickOpen} 
+                    handleOk={handleOk} 
+                    professionalValue={professionalValue} />
                 </Grid>
             </Grid>
         </div>

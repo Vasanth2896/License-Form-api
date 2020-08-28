@@ -51,8 +51,6 @@ const TableLayout = (props) => {
         }
     }
 
-
-
     const handleSortChangeStyle = (props) => {
         if (props[0].id !== '') {
             const sortStyle = { ...userTableState };
@@ -64,6 +62,8 @@ const TableLayout = (props) => {
     const handleSearchInputchange = (e) => {
         setUserTableState({ ...userTableState, searchInput: e.target.value });
     }
+
+   
 
     useEffect(() => {
         searchInput.length ? globalSearchFilter() : setUserTableState({ ...userTableState, filteredData: userList });

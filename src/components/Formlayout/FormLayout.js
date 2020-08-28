@@ -31,7 +31,6 @@ const FormLayout = (props) => {
     const [errorFree, setErrorFree] = useState(false);
     const [apiError, setApiError] = useState(false);
     const [formLoadingStatus, setFormLoadingStatus] = useState(true);
-    const newCompleted = { ...completed };
     const newErrorFree = personalDetailError.nameError || personalDetailError.mailIdError;
     const steps = [
         {
@@ -52,65 +51,64 @@ const FormLayout = (props) => {
     ];
 
 
-
-    const loadSeed = async () => {
-        const getStateData = await apiAction.getStates();
-        const getGenderData = await apiAction.getGender();
-        const getLanguagesData = await apiAction.getLanguages();
-        const getQualificationDetailsData = await apiAction.getQualificationDetails();
-        const getProfessionalLevelData = await apiAction.getProfessionalLevel();
-        const getSalaryPerAnnumData = await apiAction.getSalaryPerAnnum();
-        const getKnowledgeSeedData = await apiAction.getKnownViaProducts();
-        const getUserRolesData = await apiAction.getUserRoles();
-        const getAddressTypeData = await apiAction.getAddressType();
-        const getAllUsersData = await apiAction.getAllUsers();
-
-        const allSeedApis = [getStateData, getGenderData, getLanguagesData, getQualificationDetailsData,
-            getProfessionalLevelData, getSalaryPerAnnumData, getKnowledgeSeedData, getUserRolesData
-            , getAddressTypeData];
-        const apiSeedValidation = allSeedApis.some(data => data.request.status !== 200);
-
-        if (apiSeedValidation) {
-            setApiError(true);
-        }
-
-        const seedHolder = {
-            states: getStateData.data,
-            gender: getGenderData.data,
-            language: getLanguagesData.data,
-            qualifcationDetailsSeed: getQualificationDetailsData.data,
-            professionalLevel: getProfessionalLevelData.data,
-            salary: getSalaryPerAnnumData.data,
-            knowledgeSeed: getKnowledgeSeedData.data,
-            userRoles: getUserRolesData.data,
-            addressType: getAddressTypeData.data
-        }
-        
-        
-        onChange('userList', getAllUsersData.data);
-        onChange('seed', seedHolder);
-        
-        setFormLoadingStatus(false);
-    }
-
-
-
-
     useEffect(() => {
+        const loadSeed = async () => {
+            const getStateData = await apiAction.getStates();
+            const getGenderData = await apiAction.getGender();
+            const getLanguagesData = await apiAction.getLanguages();
+            const getQualificationDetailsData = await apiAction.getQualificationDetails();
+            const getProfessionalLevelData = await apiAction.getProfessionalLevel();
+            const getSalaryPerAnnumData = await apiAction.getSalaryPerAnnum();
+            const getKnowledgeSeedData = await apiAction.getKnownViaProducts();
+            const getUserRolesData = await apiAction.getUserRoles();
+            const getAddressTypeData = await apiAction.getAddressType();
+            const getAllUsersData = await apiAction.getAllUsers();
+
+            const allSeedApis = [getStateData, getGenderData, getLanguagesData, getQualificationDetailsData,
+                getProfessionalLevelData, getSalaryPerAnnumData, getKnowledgeSeedData, getUserRolesData
+                , getAddressTypeData];
+            const apiSeedValidation = allSeedApis.some(data => data.request.status !== 200);
+
+            if (apiSeedValidation) {
+                setApiError(true);
+            }
+
+            const seedHolder = {
+                states: getStateData.data,
+                gender: getGenderData.data,
+                language: getLanguagesData.data,
+                qualifcationDetailsSeed: getQualificationDetailsData.data,
+                professionalLevel: getProfessionalLevelData.data,
+                salary: getSalaryPerAnnumData.data,
+                knowledgeSeed: getKnowledgeSeedData.data,
+                userRoles: getUserRolesData.data,
+                addressType: getAddressTypeData.data
+            }
+
+
+            onChange('userList', getAllUsersData.data);
+            onChange('seed', seedHolder);
+
+            setFormLoadingStatus(false);
+        }
+
         loadSeed();
-    }, [])
+    }, [onChange])
 
     function handleBlankSpace(detail) {
         return !detail.toString().replace(/\s/g, '').length <= 0;
     }
 
-    useEffect(() => {
+
+    const handleBrowserButtons = () => {
         const { action, location } = history;
         if (action === 'POP') {
             const popStep = steps.find(step => step.routePath === location.pathname);
             setActiveStep(popStep.id);
         }
-    }, []);
+    }
+
+    useEffect(handleBrowserButtons, [history, steps]);
 
     const backButtonNavigation = (stepItem) => {
         if (stepItem.id) {
@@ -122,12 +120,24 @@ const FormLayout = (props) => {
         }
     }
 
+
     const handleComplete = (completeflag, currentStep) => {
+        const newCompleted = { ...completed };
         newCompleted[currentStep] = completeflag;
         setCompleted({ ...newCompleted });
     };
 
-    function personalDetailsValidator(textFields, objectFields, collectionFields) {
+
+    const personalDetailsStepperCheck = () => {
+        const { age, dateOfBirth, knownViaProducts, mailId, mobNo, motherTongueId, name, preferredLanguageId } = personalDetails;
+        const personalDetailTextField = { age, mailId, mobNo, name };
+        const personalDetailObjectFields = { dateOfBirth, motherTongueId };
+        const personalDetailsCollections = { knownViaProducts, preferredLanguageId };
+        const personalValidator = personalDetailsValidator(personalDetailTextField, personalDetailObjectFields, personalDetailsCollections);
+        handleComplete(personalValidator, 0);
+    }
+
+    const personalDetailsValidator = (textFields, objectFields, collectionFields) => {
         const collectionValidation = Object.values(collectionFields).every(collection => collection.length);
         const objectValidation = Object.values(objectFields).every(field => field !== null);
         const textValidation = Object.values(textFields).every(detail => handleBlankSpace(detail));
@@ -141,32 +151,20 @@ const FormLayout = (props) => {
         return false;
     }
 
-
-    useEffect(() => {
-        const { age, dateOfBirth, knownViaProducts, mailId, mobNo, motherTongueId, name, preferredLanguageId } = personalDetails;
-        const personalDetailTextField = { age, mailId, mobNo, name };
-        const personalDetailObjectFields = { dateOfBirth, motherTongueId };
-        const personalDetailsCollections = { knownViaProducts, preferredLanguageId };
-        const personalValidator = personalDetailsValidator(personalDetailTextField, personalDetailObjectFields, personalDetailsCollections);
-        handleComplete(personalValidator, 0);
-    }, [personalDetails]);
-
-    function addressDetailsValidator(idFields, textFields) {
-        const validation = Object.values(idFields).every(id => id !== null) && Object.values(textFields).every(detail => handleBlankSpace(detail));
-        return validation;
-    }
-
-
-    useEffect(() => {
+    const addressDetailsStepperCheck = () => {
         const { stateId, districtId, address, country, pincode } = addressDetails;
         const addressDetailsIdFields = { stateId, districtId };
         const addressDetailsTextField = { address, country, pincode };
         const addressValidator = addressDetailsValidator(addressDetailsIdFields, addressDetailsTextField);
         handleComplete(addressValidator, 1);
-    }, [addressDetails])
+    }
 
+    const addressDetailsValidator = (idFields, textFields) => {
+        const validation = Object.values(idFields).every(id => id !== null) && Object.values(textFields).every(detail => handleBlankSpace(detail));
+        return validation;
+    }
 
-    useEffect(() => {
+    const qualificationDetailsStepperCheck = () => {
         if (qualificationDetails.userRoleId === 3) {
             handleComplete(true, 2);
         }
@@ -184,7 +182,14 @@ const FormLayout = (props) => {
                 Object.values(studentFormIdFields).every(id => id !== null);
             handleComplete(studentFormValidation, 2)
         }
-    }, [qualificationDetails])
+    }
+
+
+    useEffect(personalDetailsStepperCheck, [personalDetails]);
+    useEffect(addressDetailsStepperCheck, [addressDetails]);
+    useEffect(qualificationDetailsStepperCheck, [qualificationDetails]);
+
+
 
     useEffect(() => {
         setErrorFree(newErrorFree);
@@ -207,7 +212,7 @@ const FormLayout = (props) => {
 
     return (
         <div>
-            {formLoadingStatus? (<Loader />) : (
+            {formLoadingStatus ? (<Loader />) : (
                 !apiError ? (
                     <div>
                         <Container style={{ height: '100vh' }}>
