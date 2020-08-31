@@ -16,7 +16,7 @@ const PersonalDetailFooter = (props) => {
 
     const handleErrorValidation = () => {
         const isValid = errorValidation();
-        if (isValid) {
+        if (!isValid) {
             handleNext();
         }
     }

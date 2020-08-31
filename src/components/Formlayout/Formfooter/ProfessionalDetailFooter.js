@@ -10,7 +10,7 @@ const ProfessionalDetailFooter = (props) => {
 
     const handleSave =  () => {
         const isValid =  errorValidation();
-        if (isValid) {
+        if (!isValid) {
             saveData()
         }
         else {

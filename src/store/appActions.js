@@ -37,11 +37,10 @@ export const initialState = {
         annumSal: null
     },
     personalDetailError: {
-        nameError: false,
-        mailIdError: false,
         nameHelperText: '',
         mailIdHelperText: '',
     },
+    formIsNotValid: false,
     editFlag: false,
     editId: null,
     userList: [],
@@ -62,32 +61,29 @@ export function errorValidation() {
         const emailDuplicateFlag = newUserList.some(user => user.mailId === mailId);
 
         if (emailDuplicateFlag) {
-            personalDetailError.mailIdError = true;
             personalDetailError.mailIdHelperText = 'The mail id already exists';
         }
 
         if (name === '' || name.toString().replace(/\s/g, '').length <= 0) {
-
-            personalDetailError.nameError = true;
             personalDetailError.nameHelperText = 'Please enter the name';
         }
 
         if (mailId === '') {
-            personalDetailError.mailIdError = true;
             personalDetailError.mailIdHelperText = 'Please enter the mail id';
         }
 
         if (mailId !== '' && !mailIdRegex.test(mailId)) {
-            personalDetailError.mailIdError = true;
             personalDetailError.mailIdHelperText = 'invalid email ID';
         }
 
         dispatch(app_onChange('personalDetailError', personalDetailError));
-        if (personalDetailError.nameError || personalDetailError.mailIdError) {
-            return false;
+        if (personalDetailError.nameHelperText || personalDetailError.mailIdHelperText) {
+            dispatch(app_onChange('formIsNotValid', true));
+            return true; // return thing necessary or not
         }
         else {
-            return true
+            dispatch(app_onChange('formIsNotValid', false));
+            return false;
         }
     }
 }

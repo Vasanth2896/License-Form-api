@@ -19,9 +19,9 @@ const PersonalDetails = (props) => {
     const handleChange = (key, value) => {
         personalDetails[key] = value;
         if ((key === 'name' || key === 'mailId') && !value.toString().replace(/\s/g, '').length <= 0) {
-            personalDetailError[`${key}Error`] = false;
             personalDetailError[`${key}HelperText`] = ''
             onChange('personalDetailError', personalDetailError);
+            onChange('formIsNotValid', false);
         }
 
         onChange('personalDetails', personalDetails);
@@ -39,7 +39,7 @@ const PersonalDetails = (props) => {
                                 label='User name'
                                 onChange={(e) => handleChange('name', e.target.value)}
                                 value={personalDetails.name || ''}
-                                error={personalDetailError.nameError}
+                                error={personalDetailError.nameHelperText.length ? true : false}
                                 helperText={personalDetailError.nameHelperText}
                                 required
                             />
@@ -79,7 +79,7 @@ const PersonalDetails = (props) => {
                                 label='Mail id'
                                 onChange={(e) => handleChange('mailId', e.target.value)}
                                 value={personalDetails.mailId}
-                                error={personalDetailError.mailIdError}
+                                error={personalDetailError.mailIdHelperText.length ? true : false}
                                 helperText={personalDetailError.mailIdHelperText}
                                 required
                             />

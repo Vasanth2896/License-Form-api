@@ -24,14 +24,13 @@ const useStyles = makeStyles((theme) => ({
 
 const FormLayout = (props) => {
     const { state, history, onChange } = props;
-    const { personalDetails, addressDetails, qualificationDetails, personalDetailError } = state;
+    const { personalDetails, addressDetails, qualificationDetails,formIsNotValid } = state;
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
-    const [errorFree, setErrorFree] = useState(false);
+    const newCompleted = { ...completed };
     const [apiError, setApiError] = useState(false);
     const [formLoadingStatus, setFormLoadingStatus] = useState(true);
-    const newErrorFree = personalDetailError.nameError || personalDetailError.mailIdError;
     const steps = [
         {
             id: 0,
@@ -108,7 +107,7 @@ const FormLayout = (props) => {
         }
     }
 
-    useEffect(handleBrowserButtons, [history, steps]);
+
 
     const backButtonNavigation = (stepItem) => {
         if (stepItem.id) {
@@ -122,7 +121,6 @@ const FormLayout = (props) => {
 
 
     const handleComplete = (completeflag, currentStep) => {
-        const newCompleted = { ...completed };
         newCompleted[currentStep] = completeflag;
         setCompleted({ ...newCompleted });
     };
@@ -184,17 +182,6 @@ const FormLayout = (props) => {
         }
     }
 
-
-    useEffect(personalDetailsStepperCheck, [personalDetails]);
-    useEffect(addressDetailsStepperCheck, [addressDetails]);
-    useEffect(qualificationDetailsStepperCheck, [qualificationDetails]);
-
-
-
-    useEffect(() => {
-        setErrorFree(newErrorFree);
-    }, [newErrorFree]);
-
     const handleNext = () => {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
         history.push(steps[activeStep + 1].routePath);
@@ -210,6 +197,10 @@ const FormLayout = (props) => {
         setActiveStep(step);
     };
 
+    useEffect(personalDetailsStepperCheck, [personalDetails]);
+    useEffect(addressDetailsStepperCheck, [addressDetails]);
+    useEffect(qualificationDetailsStepperCheck, [qualificationDetails]);
+    useEffect(handleBrowserButtons, [history, steps]);
     return (
         <div>
             {formLoadingStatus ? (<Loader />) : (
@@ -221,14 +212,14 @@ const FormLayout = (props) => {
                                 <h3>Individual User</h3>
                             </div>
                             <Grid container spacing={7}>
-                                <Grid item xs={3} style={{ cursor: errorFree ? 'not-allowed' : 'default' }} >
+                                <Grid item xs={3} style={{ cursor: formIsNotValid ? 'not-allowed' : 'default' }} >
                                     <NavigationStepper
                                         stepperSteps={steps}
                                         stepperClassname={classes.root}
                                         activeStep={activeStep}
                                         handleStep={handleStep}
                                         completed={completed}
-                                        disabled={errorFree}
+                                        disabled={formIsNotValid}
                                     />
                                 </Grid>
                                 <Grid item xs={9}>
