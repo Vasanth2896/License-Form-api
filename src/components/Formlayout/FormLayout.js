@@ -12,9 +12,8 @@ import * as appActions from '../../store/appActions'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import NavigationStepper from '../Common/NavigationStepper';
-import * as apiAction from '../../apiConfig/apis'
+// import * as apiAction from '../../apiConfig/apis'
 import ServerErrorAlert from "../Common/ServerErrorAlert";
-import Loader from '../Common/Loader'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,13 +23,13 @@ const useStyles = makeStyles((theme) => ({
 
 const FormLayout = (props) => {
     const { state, history, onChange } = props;
-    const { personalDetails, addressDetails, qualificationDetails,formIsNotValid } = state;
+    const { personalDetails, addressDetails, qualificationDetails, personalDetailError } = state;
     const classes = useStyles();
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
     const newCompleted = { ...completed };
     const [apiError, setApiError] = useState(false);
-    const [formLoadingStatus, setFormLoadingStatus] = useState(true);
+    const stepperState = personalDetailError.nameHelperText || personalDetailError.mailIdHelperText;
     const steps = [
         {
             id: 0,
@@ -49,55 +48,50 @@ const FormLayout = (props) => {
         }
     ];
 
+    // useEffect(() => {
+    //     const loadSeed = async () => {
+    //         const getStateData = await apiAction.getStates();
+    //         const getGenderData = await apiAction.getGender();
+    //         const getLanguagesData = await apiAction.getLanguages();
+    //         const getQualificationDetailsData = await apiAction.getQualificationDetails();
+    //         const getProfessionalLevelData = await apiAction.getProfessionalLevel();
+    //         const getSalaryPerAnnumData = await apiAction.getSalaryPerAnnum();
+    //         const getKnowledgeSeedData = await apiAction.getKnownViaProducts();
+    //         const getUserRolesData = await apiAction.getUserRoles();
+    //         const getAddressTypeData = await apiAction.getAddressType();
+    //         const getAllUsersData = await apiAction.getAllUsers();
 
-    useEffect(() => {
-        const loadSeed = async () => {
-            const getStateData = await apiAction.getStates();
-            const getGenderData = await apiAction.getGender();
-            const getLanguagesData = await apiAction.getLanguages();
-            const getQualificationDetailsData = await apiAction.getQualificationDetails();
-            const getProfessionalLevelData = await apiAction.getProfessionalLevel();
-            const getSalaryPerAnnumData = await apiAction.getSalaryPerAnnum();
-            const getKnowledgeSeedData = await apiAction.getKnownViaProducts();
-            const getUserRolesData = await apiAction.getUserRoles();
-            const getAddressTypeData = await apiAction.getAddressType();
-            const getAllUsersData = await apiAction.getAllUsers();
+    //         const allSeedApis = [getStateData, getGenderData, getLanguagesData, getQualificationDetailsData,
+    //             getProfessionalLevelData, getSalaryPerAnnumData, getKnowledgeSeedData, getUserRolesData
+    //             , getAddressTypeData];
+    //         const apiSeedValidation = allSeedApis.some(data => data.request.status !== 200);
 
-            const allSeedApis = [getStateData, getGenderData, getLanguagesData, getQualificationDetailsData,
-                getProfessionalLevelData, getSalaryPerAnnumData, getKnowledgeSeedData, getUserRolesData
-                , getAddressTypeData];
-            const apiSeedValidation = allSeedApis.some(data => data.request.status !== 200);
+    //         if (apiSeedValidation) {
+    //             setApiError(true);
+    //         }
 
-            if (apiSeedValidation) {
-                setApiError(true);
-            }
-
-            const seedHolder = {
-                states: getStateData.data,
-                gender: getGenderData.data,
-                language: getLanguagesData.data,
-                qualifcationDetailsSeed: getQualificationDetailsData.data,
-                professionalLevel: getProfessionalLevelData.data,
-                salary: getSalaryPerAnnumData.data,
-                knowledgeSeed: getKnowledgeSeedData.data,
-                userRoles: getUserRolesData.data,
-                addressType: getAddressTypeData.data
-            }
+    //         const seedHolder = {
+    //             states: getStateData.data,
+    //             gender: getGenderData.data,
+    //             language: getLanguagesData.data,
+    //             qualifcationDetailsSeed: getQualificationDetailsData.data,
+    //             professionalLevel: getProfessionalLevelData.data,
+    //             salary: getSalaryPerAnnumData.data,
+    //             knowledgeSeed: getKnowledgeSeedData.data,
+    //             userRoles: getUserRolesData.data,
+    //             addressType: getAddressTypeData.data
+    //         }
 
 
-            onChange('userList', getAllUsersData.data);
-            onChange('seed', seedHolder);
-
-            setFormLoadingStatus(false);
-        }
-
-        loadSeed();
-    }, [onChange])
+    //         onChange('userList', getAllUsersData.data);
+    //         onChange('seed', seedHolder);
+    //     }
+    //     loadSeed();
+    // }, [onChange])
 
     function handleBlankSpace(detail) {
         return !detail.toString().replace(/\s/g, '').length <= 0;
     }
-
 
     const handleBrowserButtons = () => {
         const { action, location } = history;
@@ -106,8 +100,6 @@ const FormLayout = (props) => {
             setActiveStep(popStep.id);
         }
     }
-
-
 
     const backButtonNavigation = (stepItem) => {
         if (stepItem.id) {
@@ -124,6 +116,7 @@ const FormLayout = (props) => {
         newCompleted[currentStep] = completeflag;
         setCompleted({ ...newCompleted });
     };
+
 
 
     const personalDetailsStepperCheck = () => {
@@ -201,48 +194,49 @@ const FormLayout = (props) => {
     useEffect(addressDetailsStepperCheck, [addressDetails]);
     useEffect(qualificationDetailsStepperCheck, [qualificationDetails]);
     useEffect(handleBrowserButtons, [history, steps]);
+
+
     return (
         <div>
-            {formLoadingStatus ? (<Loader />) : (
-                !apiError ? (
-                    <div>
-                        <Container style={{ height: '100vh' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', width: '18%', marginBottom: '20px' }}>
-                                <FontAwesomeIcon icon={faArrowLeft} onClick={() => backButtonNavigation(steps[activeStep])} style={{ cursor: 'pointer' }} />
-                                <h3>Individual User</h3>
-                            </div>
-                            <Grid container spacing={7}>
-                                <Grid item xs={3} style={{ cursor: formIsNotValid ? 'not-allowed' : 'default' }} >
-                                    <NavigationStepper
-                                        stepperSteps={steps}
-                                        stepperClassname={classes.root}
-                                        activeStep={activeStep}
-                                        handleStep={handleStep}
-                                        completed={completed}
-                                        disabled={formIsNotValid}
-                                    />
-                                </Grid>
-                                <Grid item xs={9}>
-                                    <div>
-                                        <Redirect from='/' to={'/layout/PersonalDetails'} />
-                                        <Switch>
-                                            <Route path={'/layout/PersonalDetails'} render={() => <PersonalDetails {...props} />} />
-                                            <Route path={'/layout/AddressDetails'} render={() => <AddressDetails {...props} />} />
-                                            <Route path={'/layout/ProfessionalDetails'} render={() => <ProfessionalDetails {...props} />} />
-                                        </Switch>
-                                    </div>
-                                </Grid>
+            {!apiError ? (
+                <div>
+                    <Container style={{ height: '100vh' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly', width: '18%', marginBottom: '20px' }}>
+                            <FontAwesomeIcon icon={faArrowLeft} onClick={() => backButtonNavigation(steps[activeStep])} style={{ cursor: 'pointer' }} />
+                            <h3>Individual User</h3>
+                        </div>
+                        <Grid container spacing={7}>
+                            <Grid item xs={3} style={{ cursor: stepperState.length ? 'not-allowed' : 'default' }} >
+                                <NavigationStepper
+                                    stepperSteps={steps}
+                                    stepperClassname={classes.root}
+                                    activeStep={activeStep}
+                                    handleStep={handleStep}
+                                    completed={completed}
+                                    disabled={stepperState.length ? true : false}
+                                />
                             </Grid>
-                        </Container>
-                        <FormFooter
-                            handleNext={handleNext}
-                            handleBack={handleBack}
-                            setActiveStep={setActiveStep}
-                            {...props} />
-                    </div>
-                ) : (
-                        <ServerErrorAlert />
-                    ))
+                            <Grid item xs={9}>
+                                <div>
+                                    <Redirect from='/' to={'/layout/PersonalDetails'} />
+                                    <Switch>
+                                        <Route path={'/layout/PersonalDetails'} render={() => <PersonalDetails {...props} />} />
+                                        <Route path={'/layout/AddressDetails'} render={() => <AddressDetails {...props} />} />
+                                        <Route path={'/layout/ProfessionalDetails'} render={() => <ProfessionalDetails {...props} />} />
+                                    </Switch>
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </Container>
+                    <FormFooter
+                        handleNext={handleNext}
+                        handleBack={handleBack}
+                        setActiveStep={setActiveStep}
+                        {...props} />
+                </div>
+            ) : (
+                    <ServerErrorAlert />
+                )
             }
         </div>
     )

@@ -40,12 +40,13 @@ export const initialState = {
         nameHelperText: '',
         mailIdHelperText: '',
     },
-    formIsNotValid: false,
     editFlag: false,
     editId: null,
     userList: [],
     user: {},
     seed: {},
+    loadingStatus: true,
+    apiError: ''
 }
 
 export function app_onChange(name, value) {
@@ -78,12 +79,10 @@ export function errorValidation() {
 
         dispatch(app_onChange('personalDetailError', personalDetailError));
         if (personalDetailError.nameHelperText || personalDetailError.mailIdHelperText) {
-            dispatch(app_onChange('formIsNotValid', true));
-            return true; // return thing necessary or not
+            return false;
         }
         else {
-            dispatch(app_onChange('formIsNotValid', false));
-            return false;
+            return true;
         }
     }
 }

@@ -1,4 +1,3 @@
-export const baseURL = 'http://localhost:4000';
 export const addressType = '/addressType';
 export const annumSalary = '/annumSalary';
 export const knownviaproducts = '/knownviaproducts';

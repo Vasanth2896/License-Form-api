@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { baseURL } from './apiRoutes'
 
 export const apiInstance = axios.create({
-    baseURL: baseURL,
+    baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
         Accept: "application/json"
     },
@@ -13,9 +12,9 @@ export const apiInstance = axios.create({
 apiInstance.interceptors.response.use(response => {
     console.log(response);
     return response;
-}, 
-error => {
-    console.log(error);
-    return Promise.reject(error);
-});
+},
+    error => {
+        console.log(error);
+        return Promise.reject(error);
+    });
 

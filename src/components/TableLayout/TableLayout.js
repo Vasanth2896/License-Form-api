@@ -63,7 +63,7 @@ const TableLayout = (props) => {
         setUserTableState({ ...userTableState, searchInput: e.target.value });
     }
 
-   
+
 
     useEffect(() => {
         searchInput.length ? globalSearchFilter() : setUserTableState({ ...userTableState, filteredData: userList });
@@ -185,6 +185,44 @@ const TableLayout = (props) => {
             )
             }
         </div>
+
+        // <div>
+        //     {!userTableState.apiError ? (
+        //         <div className='tableLayoutContainer'>
+        //             <div className='tableLayoutHeader' >
+        //                 <div className='userListHeader'>
+        //                     <h3>Individual Users</h3>
+        //                     <h3>&nbsp;({userList.length})</h3>
+        //                 </div>
+        //                 <SearchBox
+        //                     handleSearchInputchange={handleSearchInputchange}
+        //                     searchInput={searchInput}
+        //                     history={history}
+        //                     onCancel={onCancel}
+        //                 />
+        //             </div>
+        //             {!filteredData.length || !userList.length ? <div><h1>There is no user</h1></div> :
+        //                 <div>
+        //                     <ReactTable
+        //                         data={filteredData}
+        //                         columns={columns}
+        //                         className='-striped -highlight'
+        //                         minRows={0}
+        //                         onSortedChange={(props) => handleSortChangeStyle(props)}
+        //                         showPagination={false}
+        //                     />
+        //                 </div>
+        //             }
+                    
+        //         </div>
+        //     ) : (
+        //             <ServerErrorAlert />
+        //         )
+
+        //     }
+        //     <Loader />
+        // </div>
+
 
     )
 
