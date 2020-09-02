@@ -27,7 +27,7 @@ const FormLayout = (props) => {
     const [activeStep, setActiveStep] = useState(0);
     const [completed, setCompleted] = useState({});
     const newCompleted = { ...completed };
-    const stepperState = personalDetailError.nameHelperText || personalDetailError.mailIdHelperText;
+    const stepperState = personalDetailError.nameHelperText || personalDetailError.mailIdHelperText; // change the name
     const steps = [
         {
             id: 0,
@@ -161,14 +161,14 @@ const FormLayout = (props) => {
                             <h3>Individual User</h3>
                         </div>
                         <Grid container spacing={7}>
-                            <Grid item xs={3} style={{ cursor: stepperState.length ? 'not-allowed' : 'default' }} >
+                            <Grid item xs={3} style={{ cursor: stepperState ? 'not-allowed' : 'default' }} >
                                 <NavigationStepper
                                     stepperSteps={steps}
                                     stepperClassname={classes.root}
                                     activeStep={activeStep}
                                     handleStep={handleStep}
                                     completed={completed}
-                                    disabled={stepperState.length ? true : false}
+                                    disabled={stepperState ? true : false}
                                 />
                             </Grid>
                             <Grid item xs={9}>

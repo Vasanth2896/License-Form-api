@@ -31,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 const Loader = (props) => {
     const { state } = props;
     const { loadingStatus } = state
+    console.log(loadingStatus);
     const classes = useStyles();
     return (
         <div >

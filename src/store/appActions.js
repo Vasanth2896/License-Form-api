@@ -55,6 +55,7 @@ export function app_onChange(name, value) {
 
 export function errorValidation() {
     return (dispatch, getState) => {
+
         const { personalDetails, userList, personalDetailError, editId } = getState().appReducer;
         const { name, mailId } = personalDetails;
         const mailIdRegex = /^([A-Z a-z][\w\d . _ -]+)@([\w\d _-]+).([a-z]{2,20})(\.[a-z]{2,10})$/;
@@ -111,10 +112,10 @@ export function onSave() {
             qualificationDetails: qualificationDetails
         })
         if (editFlag) {
-          apiStatus = apiAction.updateUser(user, editId);
+            apiStatus = apiAction.updateUser(user, editId);
         }
         else {
-          apiStatus =  apiAction.createUser(user);
+            apiStatus = apiAction.createUser(user);
         }
         dispatch(app_onChange('editFlag', false));
         dispatch(app_onChange('user', {}));

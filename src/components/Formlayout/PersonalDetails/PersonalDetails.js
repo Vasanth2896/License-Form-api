@@ -29,29 +29,16 @@ const PersonalDetails = (props) => {
     }
 
     const getPersonalDetailsSeed = async () => {
-
         const genderData = await apiAction.getGender();
         const languagesData = await apiAction.getLanguages();
         const knowledgeSeedData = await apiAction.getKnownViaProducts();
-        const personalDetailsSeed = [genderData, languagesData, knowledgeSeedData];
-        const personalDetailsSeedValidation = personalDetailsSeed.every(data => data.request.status === 200);
-
-
-        if (personalDetailsSeedValidation) {
-            const seedHolder = {
-                ...seed,
-                gender: genderData.data,
-                language: languagesData.data,
-                knowledgeSeed: knowledgeSeedData.data,
-            }
-            onChange('seed', seedHolder);
-            onChange('loadingStatus', false);
-
+        const seedHolder = {
+            ...seed,
+            gender: genderData.data,
+            language: languagesData.data,
+            knowledgeSeed: knowledgeSeedData.data,
         }
-        else {
-            onChange('loadingStatus', false);
-            onChange('apiError', true);
-        }
+        onChange('seed', seedHolder);
 
     }
 
@@ -60,12 +47,7 @@ const PersonalDetails = (props) => {
             getPersonalDetailsSeed();
         }
     }
-    useEffect(() => {
-        if (!apiError) {
-            onChange('loadingStatus', true);
-        }
-    }
-        , [onChange,apiError])
+
 
     useEffect(apiCall, [])
 

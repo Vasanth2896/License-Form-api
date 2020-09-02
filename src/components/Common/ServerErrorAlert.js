@@ -8,8 +8,6 @@ import { useHistory } from 'react-router-dom';
 const ServerErrorAlert = () => {
 
     const history = useHistory();
-
-
     const [open, setOpen] = React.useState(true);
 
     const handleClose = () => {

@@ -30,33 +30,14 @@ const AddressDetails = (props) => {
     }
 
     const getAddressDetailsSeed = async () => {
-
-        onChange('loadingStatus', true);
         const addressTypeData = await apiAction.getAddressType();
         const stateData = await apiAction.getStates();
-
-        const addressDetailsSeed = [addressTypeData, stateData];
-        const addressDetailsSeedValidation = addressDetailsSeed.every(data => data.request.status === 200);
-
-
-
-        if (addressDetailsSeedValidation) {
-            const seedHolder = {
-                ...seed,
-                addressType: addressTypeData.data,
-                states: stateData.data
-            }
-
-            onChange('seed', seedHolder);
-            onChange('loadingStatus', false);
-
+        const seedHolder = {
+            ...seed,
+            addressType: addressTypeData.data,
+            states: stateData.data
         }
-        else {
-            onChange('loadingStatus', false);
-            onChange('apiError', true);
-        }
-
-
+        onChange('seed', seedHolder);
     }
 
     const apiCall = () => {
@@ -66,13 +47,6 @@ const AddressDetails = (props) => {
     }
 
     useEffect(apiCall, []);
-
-    useEffect(() => {
-        if (!apiError) {
-            onChange('loadingStatus', true);
-        }
-    }, [onChange, apiError])
-
 
     return (
         <div>

@@ -4,12 +4,14 @@ import { footerButtonStyles } from "../../Common/commonStyles";
 
 const ProfessionalDetailFooter = (props) => {
 
-    const { history, handleBack, errorValidation, onSave, setActiveStep, state} = props;
+    console.log(props);
+
+    const { history, handleBack, errorValidation, onSave, setActiveStep, state, onChange } = props;
     const { editFlag } = state;
     const classes = footerButtonStyles();
 
-    const handleSave =  () => {
-        const isValid =  errorValidation();
+    const handleSave = () => {
+        const isValid = errorValidation();
         if (isValid) {
             saveData()
         }
@@ -20,9 +22,16 @@ const ProfessionalDetailFooter = (props) => {
     }
 
     const saveData = async () => {
+
+        // have to ask business doubt to abishek
+
         const wait = await onSave();
-        if (wait.request.status === 200) {
+        if (wait.request.status === 200 && !wait.request.response.error) {
             history.push('/');
+            onChange('apiError', false);
+        }
+        else {
+            onChange('apiError', true);
         }
     }
 

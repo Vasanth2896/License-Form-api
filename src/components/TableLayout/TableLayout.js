@@ -36,16 +36,8 @@ const TableLayout = (props) => {
 
 
     const loadAllUsers = async () => {
-        onChange('loadingStatus', true);
         const allUsersData = await apiAction.getAllUsers();
-        if (allUsersData.request.status === 201) {
-            onChange('apiError', false);
-            onChange('userList', allUsersData.data);
-        }
-        else {
-            onChange('apiError', true);
-        }
-        onChange('loadingStatus', false);
+        onChange('userList', allUsersData.data);
     }
 
     const handleSortChangeStyle = (props) => {
@@ -59,8 +51,6 @@ const TableLayout = (props) => {
     const handleSearchInputchange = (e) => {
         setUserTableState({ ...userTableState, searchInput: e.target.value });
     }
-
-
 
     useEffect(() => {
         searchInput.length ? globalSearchFilter() : setUserTableState({ ...userTableState, filteredData: userList });

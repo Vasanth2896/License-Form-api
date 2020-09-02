@@ -10,7 +10,6 @@ import ProfessionalChoices from './ProfessionalChoices'
 import * as apiAction from '../../../apiConfig/apis';
 
 const ProfessionalDetails = (props) => {
-
     const classes = professionalDetailRadioButtonStyles();
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
@@ -23,32 +22,21 @@ const ProfessionalDetails = (props) => {
     const studentFormProps = { ...props, districts };
 
     const getProfessionalDetailsSeed = async () => {
-
         const stateData = await apiAction.getStates();
         const qualificationDetailsData = await apiAction.getQualificationDetails();
         const professionalLevelData = await apiAction.getProfessionalLevel();
         const salaryPerAnnumData = await apiAction.getSalaryPerAnnum();
         const userRolesData = await apiAction.getUserRoles();
-        const professionalDetailsSeed = [stateData, qualificationDetailsData, professionalLevelData
-            , salaryPerAnnumData, userRolesData];
-        const professionalDetailsSeedValidation = professionalDetailsSeed.every(data => data.request.status === 200);
-
-        if (professionalDetailsSeedValidation) {
-            const seedHolder = {
-                ...seed,
-                states: stateData.data,
-                qualifcationDetailsSeed: qualificationDetailsData.data,
-                professionalLevel: professionalLevelData.data,
-                salary: salaryPerAnnumData.data,
-                userRoles: userRolesData.data,
-            }
-            onChange('loadingStatus', false);
-            onChange('seed', seedHolder);
+        const seedHolder = {
+            ...seed,
+            states: stateData.data,
+            qualifcationDetailsSeed: qualificationDetailsData.data,
+            professionalLevel: professionalLevelData.data,
+            salary: salaryPerAnnumData.data,
+            userRoles: userRolesData.data,
         }
-        else {
-            onChange('loadingStatus', false);
-            onChange('apiError', true);
-        }
+        onChange('loadingStatus', false);
+        onChange('seed', seedHolder);
     }
 
     const apiCall = () => {
@@ -58,13 +46,6 @@ const ProfessionalDetails = (props) => {
     }
 
     useEffect(apiCall, [])
-
-    useEffect(() => {
-        if (!apiError) {
-            onChange('loadingStatus', true);
-        }
-    }
-        , [onChange, apiError])
 
     useEffect(() => {
         if (qualificationDetails.stateId !== null) {
