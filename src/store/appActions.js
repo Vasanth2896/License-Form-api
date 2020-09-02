@@ -46,7 +46,7 @@ export const initialState = {
     user: {},
     seed: {},
     loadingStatus: true,
-    apiError: ''
+    apiError: false
 }
 
 export function app_onChange(name, value) {

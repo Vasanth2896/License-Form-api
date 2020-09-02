@@ -5,13 +5,12 @@ import InputSelect from "../../Common/InputSelect";
 import InputText from '../../Common/InputText';
 import { AddressDetailsStyles } from '../../Common/commonStyles';
 import * as apiAction from '../../../apiConfig/apis';
-import Loader from "../../Common/Loader";
 
 const AddressDetails = (props) => {
     const classes = AddressDetailsStyles();
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { addressDetails, seed, loadingStatus } = currentState;
+    const { addressDetails, seed, apiError } = currentState;
     const [districts, setDistricts] = useState([]);
 
     const handleChange = (key, value) => {
@@ -31,6 +30,8 @@ const AddressDetails = (props) => {
     }
 
     const getAddressDetailsSeed = async () => {
+
+        onChange('loadingStatus', true);
         const addressTypeData = await apiAction.getAddressType();
         const stateData = await apiAction.getStates();
 
@@ -50,160 +51,99 @@ const AddressDetails = (props) => {
             onChange('loadingStatus', false);
 
         }
+        else {
+            onChange('loadingStatus', false);
+            onChange('apiError', true);
+        }
+
 
     }
 
     const apiCall = () => {
-        getAddressDetailsSeed();
+        if (!apiError) {
+            getAddressDetailsSeed();
+        }
     }
 
     useEffect(apiCall, []);
 
     useEffect(() => {
-        onChange('loadingStatus', true);
-    }
-        , [onChange])
+        if (!apiError) {
+            onChange('loadingStatus', true);
+        }
+    }, [onChange, apiError])
 
 
     return (
         <div>
-            {
-                loadingStatus ? (<Loader />) : (
-                    <Paper className={classes.AddressDetailsStyles} elevation={2}>
-                        <div style={{ padding: '25px 40px 40px 40px' }}>
-                            <h2>Communication Address</h2>
-                            <Grid container spacing={5}>,
-                    <Grid item xs={12}>
-                                    <InputText
-                                        label='Address'
-                                        name='address'
-                                        value={addressDetails.address || ''}
-                                        handleChange={handleChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputText
-                                        label='Country'
-                                        name='country'
-                                        value={addressDetails.country || ''}
-                                        handleChange={handleChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputSelect
-                                        labelName='State'
-                                        labelId='state'
-                                        name='stateId'
-                                        handleChange={handleChange}
-                                        value={addressDetails.stateId || ''}
-                                        menuOptions={seed.states || []}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputSelect
-                                        labelName='District'
-                                        labelId='district'
-                                        name='districtId'
-                                        handleChange={handleChange}
-                                        value={addressDetails.districtId || ''}
-                                        menuOptions={districts}
-                                        disabled={addressDetails.stateId === null}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputText
-                                        label='pincode'
-                                        name='pincode'
-                                        value={addressDetails.pincode || ''}
-                                        handleChange={handleChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Box style={{ display: 'flex', alignItems: 'center' }}>
-                                        <Checkbox
-                                            color='primary'
-                                            onChange={(e) => {
-                                                handleChange('type', seed.addressType[(addressDetails.type + 2) % 2].id);
-                                            }
-                                            }
-                                            checked={addressDetails.type === 2}
-                                        ></Checkbox>
-                                        <p>Permanent address is same as communication Address</p>
-                                    </Box>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </Paper>
 
-                )
-            }
+            <Paper className={classes.AddressDetailsStyles} elevation={2}>
+                <div style={{ padding: '25px 40px 40px 40px' }}>
+                    <h2>Communication Address</h2>
+                    <Grid container spacing={5}>,
+                    <Grid item xs={12}>
+                            <InputText
+                                label='Address'
+                                name='address'
+                                value={addressDetails.address || ''}
+                                handleChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <InputText
+                                label='Country'
+                                name='country'
+                                value={addressDetails.country || ''}
+                                handleChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <InputSelect
+                                labelName='State'
+                                labelId='state'
+                                name='stateId'
+                                handleChange={handleChange}
+                                value={addressDetails.stateId || ''}
+                                menuOptions={seed.states || []}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <InputSelect
+                                labelName='District'
+                                labelId='district'
+                                name='districtId'
+                                handleChange={handleChange}
+                                value={addressDetails.districtId || ''}
+                                menuOptions={districts}
+                                disabled={addressDetails.stateId === null}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <InputText
+                                label='pincode'
+                                name='pincode'
+                                value={addressDetails.pincode || ''}
+                                handleChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box style={{ display: 'flex', alignItems: 'center' }}>
+                                <Checkbox
+                                    color='primary'
+                                    onChange={(e) => {
+                                        handleChange('type', seed.addressType[(addressDetails.type + 2) % 2].id);
+                                    }
+                                    }
+                                    checked={addressDetails.type === 2}
+                                ></Checkbox>
+                                <p>Permanent address is same as communication Address</p>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </div>
+            </Paper>
         </div>
 
-        // <Paper className={classes.AddressDetailsStyles} elevation={2}>
-        //     <div style={{ padding: '25px 40px 40px 40px' }}>
-        //         <h2>Communication Address</h2>
-        //         <Grid container spacing={5}>,
-        //             <Grid item xs={12}>
-        //                 <InputText
-        //                     label='Address'
-        //                     name='address'
-        //                     value={addressDetails.address || ''}
-        //                     handleChange={handleChange}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <InputText
-        //                     label='Country'
-        //                     name='country'
-        //                     value={addressDetails.country || ''}
-        //                     handleChange={handleChange}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <InputSelect
-        //                     labelName='State'
-        //                     labelId='state'
-        //                     name='stateId'
-        //                     handleChange={handleChange}
-        //                     value={addressDetails.stateId || ''}
-        //                     menuOptions={seed.states || []}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <InputSelect
-        //                     labelName='District'
-        //                     labelId='district'
-        //                     name='districtId'
-        //                     handleChange={handleChange}
-        //                     value={addressDetails.districtId || ''}
-        //                     menuOptions={districts}
-        //                     disabled={addressDetails.stateId === null}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <InputText
-        //                     label='pincode'
-        //                     name='pincode'
-        //                     value={addressDetails.pincode || ''}
-        //                     handleChange={handleChange}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={12}>
-        //                 <Box style={{ display: 'flex', alignItems: 'center' }}>
-        //                     <Checkbox
-        //                         color='primary'
-        //                         onChange={(e) => {
-        //                             handleChange('type', seed.addressType[(addressDetails.type + 2) % 2].id);
-        //                         }
-        //                         }
-        //                         checked={addressDetails.type === 2}
-        //                     ></Checkbox>
-        //                     <p>Permanent address is same as communication Address</p>
-        //                 </Box>
-        //             </Grid>
-        //         </Grid>
-        //     </div>
-        // </Paper>
     )
 }
 

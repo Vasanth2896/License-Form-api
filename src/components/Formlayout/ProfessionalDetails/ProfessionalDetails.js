@@ -8,14 +8,13 @@ import { professionalDetailRadioButtonStyles } from '../../Common/commonStyles'
 import AlertBox from './AlertBox';
 import ProfessionalChoices from './ProfessionalChoices'
 import * as apiAction from '../../../apiConfig/apis';
-import Loader from "../../Common/Loader";
 
 const ProfessionalDetails = (props) => {
 
     const classes = professionalDetailRadioButtonStyles();
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { qualificationDetails, editFlag, seed, loadingStatus } = currentState;
+    const { qualificationDetails, editFlag, seed, apiError } = currentState;
     const { userRoleId } = qualificationDetails;
     const [professionalValue, setProfessionalValue] = useState(userRoleId);
     const [open, setOpen] = useState(false);
@@ -34,7 +33,7 @@ const ProfessionalDetails = (props) => {
             , salaryPerAnnumData, userRolesData];
         const professionalDetailsSeedValidation = professionalDetailsSeed.every(data => data.request.status === 200);
 
-        if(professionalDetailsSeedValidation){
+        if (professionalDetailsSeedValidation) {
             const seedHolder = {
                 ...seed,
                 states: stateData.data,
@@ -45,20 +44,27 @@ const ProfessionalDetails = (props) => {
             }
             onChange('loadingStatus', false);
             onChange('seed', seedHolder);
-            
+        }
+        else {
+            onChange('loadingStatus', false);
+            onChange('apiError', true);
         }
     }
 
     const apiCall = () => {
-        getProfessionalDetailsSeed();
+        if (!apiError) {
+            getProfessionalDetailsSeed();
+        }
     }
 
     useEffect(apiCall, [])
 
     useEffect(() => {
-        onChange('loadingStatus', true);
+        if (!apiError) {
+            onChange('loadingStatus', true);
+        }
     }
-        , [onChange])
+        , [onChange, apiError])
 
     useEffect(() => {
         if (qualificationDetails.stateId !== null) {
@@ -139,76 +145,38 @@ const ProfessionalDetails = (props) => {
     }
 
     return (
+
         <div>
-            {
-                loadingStatus ? (<Loader />) : (
-                    <div>
-                        <Grid container spacing={3}>
-                            <Grid
-                                item
-                                xs={12}
-                            >
-                                <Paper elevation={2} className={classes.professionalRadioButtonContainer}>
-                                    <ProfessionalChoices
-                                        handleChange={handleRadioChange}
-                                        classes={classes}
-                                        value={professionalValue}
-                                        userRoles={seed.userRoles || []}
-                                    />
-                                </Paper>
-                            </Grid>
-                            <Grid
-                                item
-                                xs={12}
-                            >
-                                {professionalValue === 1 && <StudentForm {...studentFormProps} />}
-                                {professionalValue === 2 && <ProfessionalForm  {...props} />}
-                                {professionalValue === 3 && <HousewivesForm   {...props} />}
-                                <AlertBox
-                                    open={open}
-                                    handleClose={handleClose}
-                                    handleClickOpen={handleClickOpen}
-                                    handleOk={handleOk}
-                                    professionalValue={professionalValue} />
-                            </Grid>
-                        </Grid>
-                    </div>
-
-                )
-
-            }
+            <Grid container spacing={3}>
+                <Grid
+                    item
+                    xs={12}
+                >
+                    <Paper elevation={2} className={classes.professionalRadioButtonContainer}>
+                        <ProfessionalChoices
+                            handleChange={handleRadioChange}
+                            classes={classes}
+                            value={professionalValue}
+                            userRoles={seed.userRoles || []}
+                        />
+                    </Paper>
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                >
+                    {professionalValue === 1 && <StudentForm {...studentFormProps} />}
+                    {professionalValue === 2 && <ProfessionalForm  {...props} />}
+                    {professionalValue === 3 && <HousewivesForm   {...props} />}
+                    <AlertBox
+                        open={open}
+                        handleClose={handleClose}
+                        handleClickOpen={handleClickOpen}
+                        handleOk={handleOk}
+                        professionalValue={professionalValue} />
+                </Grid>
+            </Grid>
         </div>
-        // <div>
-        //     <Grid container spacing={3}>
-        //         <Grid
-        //             item
-        //             xs={12}
-        //         >
-        //             <Paper elevation={2} className={classes.professionalRadioButtonContainer}>
-        //                 <ProfessionalChoices
-        //                     handleChange={handleRadioChange}
-        //                     classes={classes}
-        //                     value={professionalValue}
-        //                     userRoles={seed.userRoles || []}
-        //                 />
-        //             </Paper>
-        //         </Grid>
-        //         <Grid
-        //             item
-        //             xs={12}
-        //         >
-        //             {professionalValue === 1 && <StudentForm {...studentFormProps} />}
-        //             {professionalValue === 2 && <ProfessionalForm  {...props} />}
-        //             {professionalValue === 3 && <HousewivesForm   {...props} />}
-        //             <AlertBox
-        //                 open={open}
-        //                 handleClose={handleClose}
-        //                 handleClickOpen={handleClickOpen}
-        //                 handleOk={handleOk}
-        //                 professionalValue={professionalValue} />
-        //         </Grid>
-        //     </Grid>
-        // </div>
     )
 }
 

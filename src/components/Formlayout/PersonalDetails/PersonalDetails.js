@@ -10,16 +10,13 @@ import DatePicker from "./DatePicker";
 import LanguageAutoComplete from './LanguageAutoComplete';
 import Gender from './Gender'
 import * as apiAction from '../../../apiConfig/apis';
-import Loader from "../../Common/Loader";
 
 
 const PersonalDetails = (props) => {
     const { state, onChange } = props;
     const currentState = _.cloneDeep(state);
-    const { personalDetails, personalDetailError, seed, loadingStatus } = currentState;
+    const { personalDetails, personalDetailError, seed, apiError } = currentState;
     const classes = personalDetailStyles();
-
-
 
     const handleChange = (key, value) => {
         personalDetails[key] = value;
@@ -30,7 +27,6 @@ const PersonalDetails = (props) => {
         }
         onChange('personalDetails', personalDetails);
     }
-
 
     const getPersonalDetailsSeed = async () => {
 
@@ -50,241 +46,140 @@ const PersonalDetails = (props) => {
             }
             onChange('seed', seedHolder);
             onChange('loadingStatus', false);
+
+        }
+        else {
+            onChange('loadingStatus', false);
+            onChange('apiError', true);
         }
 
     }
 
     const apiCall = () => {
-        getPersonalDetailsSeed();
+        if (!apiError) {
+            getPersonalDetailsSeed();
+        }
     }
     useEffect(() => {
-        onChange('loadingStatus', true);
+        if (!apiError) {
+            onChange('loadingStatus', true);
+        }
     }
-        , [onChange])
+        , [onChange,apiError])
 
     useEffect(apiCall, [])
 
     return (
         <div>
-            {
-                loadingStatus ? (<Loader />) : (
-                    <Paper style={{ background: '#8080801f', height: 'auto' }} elevation={2}>
-                        <div style={{ padding: '25px 40px 40px 40px' }}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={12} sm={6}>
-                                    <Box>
-                                        <TextField
-                                            fullWidth
-                                            variant='filled'
-                                            label='User name'
-                                            onChange={(e) => handleChange('name', e.target.value)}
-                                            value={personalDetails.name || ''}
-                                            error={personalDetailError.nameHelperText.length ? true : false}
-                                            helperText={personalDetailError.nameHelperText}
-                                            required
-                                        />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Gender
-                                        personalDetails={personalDetails}
-                                        genderList={seed.gender || []}
-                                        classes={classes}
-                                        handleChange={handleChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <DatePicker
-                                        personalDetails={personalDetails}
-                                        onChange={onChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Box>
-                                        <TextField
-                                            fullWidth
-                                            variant='filled'
-                                            label='Age'
-                                            onChange={(e) => handleChange('age', e.target.value)}
-                                            value={personalDetails.age}
-                                        />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Box>
-                                        <TextField
-                                            fullWidth
-                                            type='email'
-                                            variant='filled'
-                                            label='Mail id'
-                                            onChange={(e) => handleChange('mailId', e.target.value)}
-                                            value={personalDetails.mailId}
-                                            error={personalDetailError.mailIdHelperText.length ? true : false}
-                                            helperText={personalDetailError.mailIdHelperText}
-                                            required
-                                        />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Box>
-                                        <TextField
-                                            fullWidth
-                                            variant='filled'
-                                            label='Mobile no'
-                                            onChange={(e) => handleChange('mobNo', e.target.value)}
-                                            value={personalDetails.mobNo}
-                                        />
-                                    </Box>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <InputSelect
-                                        labelName='Mother Tongue'
-                                        name='motherTongueId'
-                                        handleChange={handleChange}
-                                        value={personalDetails.motherTongueId || ''}
-                                        menuOptions={seed.language || []}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    < LanguageAutoComplete
-                                        personalDetails={personalDetails}
-                                        languages={seed.language || []}
-                                        handleChange={handleChange}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <CheckboxGroup
-                                        formLabel='How you come to know about the product?'
-                                        knowledgeSeed={seed.knowledgeSeed || []}
-                                        personalDetails={personalDetails}
-                                        onChange={onChange}
-                                        formGroupClassName={classes.feedbackCheckboxContainer}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Box className={personalDetails.knownViaProducts.includes(6) ? classes.showOrder : classes.hideOrder} >
-                                        <TextField
-                                            fullWidth
-                                            variant='filled'
-                                            label='Other'
-                                            value={personalDetails.others || ''}
-                                            onChange={(e) => handleChange('others', e.target.value)}
-                                        />
-                                    </Box>
-                                </Grid>
-                            </Grid>
-                        </div>
-                    </Paper>
-                )
-            }
+            <Paper style={{ background: '#8080801f', height: 'auto' }} elevation={2}>
+                <div style={{ padding: '25px 40px 40px 40px' }}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6}>
+                            <Box>
+                                <TextField
+                                    fullWidth
+                                    variant='filled'
+                                    label='User name'
+                                    onChange={(e) => handleChange('name', e.target.value)}
+                                    value={personalDetails.name || ''}
+                                    error={personalDetailError.nameHelperText.length ? true : false}
+                                    helperText={personalDetailError.nameHelperText}
+                                    required
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Gender
+                                personalDetails={personalDetails}
+                                genderList={seed.gender || []}
+                                classes={classes}
+                                handleChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <DatePicker
+                                personalDetails={personalDetails}
+                                onChange={onChange}
+                            />
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box>
+                                <TextField
+                                    fullWidth
+                                    variant='filled'
+                                    label='Age'
+                                    onChange={(e) => handleChange('age', e.target.value)}
+                                    value={personalDetails.age}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box>
+                                <TextField
+                                    fullWidth
+                                    type='email'
+                                    variant='filled'
+                                    label='Mail id'
+                                    onChange={(e) => handleChange('mailId', e.target.value)}
+                                    value={personalDetails.mailId}
+                                    error={personalDetailError.mailIdHelperText.length ? true : false}
+                                    helperText={personalDetailError.mailIdHelperText}
+                                    required
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Box>
+                                <TextField
+                                    fullWidth
+                                    variant='filled'
+                                    label='Mobile no'
+                                    onChange={(e) => handleChange('mobNo', e.target.value)}
+                                    value={personalDetails.mobNo}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <InputSelect
+                                labelName='Mother Tongue'
+                                name='motherTongueId'
+                                handleChange={handleChange}
+                                value={personalDetails.motherTongueId || ''}
+                                menuOptions={seed.language || []}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            < LanguageAutoComplete
+                                personalDetails={personalDetails}
+                                languages={seed.language || []}
+                                handleChange={handleChange}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <CheckboxGroup
+                                formLabel='How you come to know about the product?'
+                                knowledgeSeed={seed.knowledgeSeed || []}
+                                personalDetails={personalDetails}
+                                onChange={onChange}
+                                formGroupClassName={classes.feedbackCheckboxContainer}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Box className={personalDetails.knownViaProducts.includes(6) ? classes.showOrder : classes.hideOrder} >
+                                <TextField
+                                    fullWidth
+                                    variant='filled'
+                                    label='Other'
+                                    value={personalDetails.others || ''}
+                                    onChange={(e) => handleChange('others', e.target.value)}
+                                />
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </div>
+            </Paper>
         </div>
-        // <Paper style={{ background: '#8080801f', height: 'auto' }} elevation={2}>
-        //     <div style={{ padding: '25px 40px 40px 40px' }}>
-        //         <Grid container spacing={3}>
-        //             <Grid item xs={12} sm={6}>
-        //                 <Box>
-        //                     <TextField
-        //                         fullWidth
-        //                         variant='filled'
-        //                         label='User name'
-        //                         onChange={(e) => handleChange('name', e.target.value)}
-        //                         value={personalDetails.name || ''}
-        //                         error={personalDetailError.nameHelperText.length ? true : false}
-        //                         helperText={personalDetailError.nameHelperText}
-        //                         required
-        //                     />
-        //                 </Box>
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <Gender
-        //                     personalDetails={personalDetails}
-        //                     genderList={seed.gender || []}
-        //                     classes={classes}
-        //                     handleChange={handleChange}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <DatePicker
-        //                     personalDetails={personalDetails}
-        //                     onChange={onChange}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <Box>
-        //                     <TextField
-        //                         fullWidth
-        //                         variant='filled'
-        //                         label='Age'
-        //                         onChange={(e) => handleChange('age', e.target.value)}
-        //                         value={personalDetails.age}
-        //                     />
-        //                 </Box>
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <Box>
-        //                     <TextField
-        //                         fullWidth
-        //                         type='email'
-        //                         variant='filled'
-        //                         label='Mail id'
-        //                         onChange={(e) => handleChange('mailId', e.target.value)}
-        //                         value={personalDetails.mailId}
-        //                         error={personalDetailError.mailIdHelperText.length ? true : false}
-        //                         helperText={personalDetailError.mailIdHelperText}
-        //                         required
-        //                     />
-        //                 </Box>
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <Box>
-        //                     <TextField
-        //                         fullWidth
-        //                         variant='filled'
-        //                         label='Mobile no'
-        //                         onChange={(e) => handleChange('mobNo', e.target.value)}
-        //                         value={personalDetails.mobNo}
-        //                     />
-        //                 </Box>
-        //             </Grid>
-        //             <Grid item xs={6}>
-        //                 <InputSelect
-        //                     labelName='Mother Tongue'
-        //                     name='motherTongueId'
-        //                     handleChange={handleChange}
-        //                     value={personalDetails.motherTongueId || ''}
-        //                     menuOptions={seed.language || []}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={12}>
-        //                 < LanguageAutoComplete
-        //                     personalDetails={personalDetails}
-        //                     languages={seed.language || []}
-        //                     handleChange={handleChange}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={12}>
-        //                 <CheckboxGroup
-        //                     formLabel='How you come to know about the product?'
-        //                     knowledgeSeed={seed.knowledgeSeed || []}
-        //                     personalDetails={personalDetails}
-        //                     onChange={onChange}
-        //                     formGroupClassName={classes.feedbackCheckboxContainer}
-        //                 />
-        //             </Grid>
-        //             <Grid item xs={12}>
-        //                 <Box className={personalDetails.knownViaProducts.includes(6) ? classes.showOrder : classes.hideOrder} >
-        //                     <TextField
-        //                         fullWidth
-        //                         variant='filled'
-        //                         label='Other'
-        //                         value={personalDetails.others || ''}
-        //                         onChange={(e) => handleChange('others', e.target.value)}
-        //                     />
-        //                 </Box>
-        //             </Grid>
-        //         </Grid>
-        //     </div>
-        // </Paper>
+
     )
 }
 
